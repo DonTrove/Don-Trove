@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Don Trove — Thoughtfully curated gifts for every occasion, wrapped in elegance, delivered with care."/>
+  <title>Don Trove — Curated Gifts</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+
+<!-- ══ HEADER ══ -->
+<header>
+  <a class="brand" href="#">
+    <span>Don</span> Trove
+  </a>
+  <nav>
+    <button class="nav-btn active" onclick="showView('shop')">Shop</button>
+    <button class="nav-btn" onclick="showView('cart')">My Cart</button>
+    <button class="nav-btn cart-btn" onclick="showView('cart')">
+      🛍️ Cart
+      <span class="cart-badge" id="cartBadge">0</span>
+    </button>
+  </nav>
+</header>
+
+<!-- ══ HERO ══ -->
+<div class="hero">
+  <div class="hero-orb hero-orb-1"></div>
+  <div class="hero-orb hero-orb-2"></div>
+  <div class="hero-content">
+    <div class="hero-tag">✦ Curated with love</div>
+    <h1>Gifts that<br/><em>speak for you</em></h1>
+    <p>Thoughtfully curated gifts for every occasion — wrapped in elegance, delivered with care.</p>
+  </div>
+</div>
+
+<!-- ══ TABS ══ -->
+<div class="tabs-wrap" id="tabsBar">
+  <button class="tab active" data-view="shop" onclick="showView('shop')">🛍 Shop</button>
+  <button class="tab" data-view="cart" onclick="showView('cart')">🛒 Cart</button>
+  <button class="tab" data-view="checkout" onclick="showView('checkout')" id="checkoutTab" style="display:none">📋 Details</button>
+</div>
+
+<!-- ══ SHOP VIEW ══ -->
+<div class="view active" id="view-shop">
+  <p class="section-title">Our Collection</p>
+  <p class="section-sub">Each gift is carefully selected to delight the ones you love</p>
+  <div id="productsGrid" class="products-grid">
+    <div class="loading-wrap">
+      <div class="spinner"></div>
+      <p>Loading beautiful gifts…</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CART VIEW ══ -->
+<div class="view" id="view-cart">
+  <p class="section-title">Your Cart</p>
+  <p class="section-sub">Review your selections before proceeding</p>
+  <div class="cart-layout">
+    <div id="cartItemsList"></div>
+    <div class="order-summary">
+      <div class="summary-title">Order Summary</div>
+      <div class="summary-row"><span>Subtotal</span><span id="summSubtotal">PKR 0</span></div>
+      <div class="wrap-option">
+        <label>
+          <input type="checkbox" id="giftWrapCheck" onchange="updateSummary()"/>
+          🎁 Premium Gift Wrapping — PKR 300
+        </label>
+      </div>
+      <div class="summary-row"><span>Delivery Fee</span><span id="summDelivery">PKR 200</span></div>
+      <div class="summary-row total"><span>Total</span><span id="summTotal">PKR 0</span></div>
+      <button class="checkout-btn" id="proceedBtn" onclick="proceedToCheckout()" disabled>
+        Place Order →
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CHECKOUT DETAIL VIEW ══ -->
+<div class="view" id="view-checkout">
+  <p class="section-title">Order Details</p>
+  <p class="section-sub">Tell us where to send your thoughtful gift</p>
+  <div class="checkout-grid">
+    <div>
+
+      <!-- Sender -->
+      <div class="form-section">
+        <div class="form-section-title"><div class="icon">👤</div> Your Information</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Your Name *</label>
+            <input type="text" id="senderName" placeholder="Full name" required/>
+          </div>
+          <div class="form-group">
+            <label>Phone *</label>
+            <input type="tel" id="phone" placeholder="+92 300 0000000" required/>
+          </div>
+        </div>
+        <div class="form-row full">
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="email" placeholder="your@email.com"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recipient -->
+      <div class="form-section">
+        <div class="form-section-title"><div class="icon">🎁</div> Recipient Details</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Recipient Name *</label>
+            <input type="text" id="recipientName" placeholder="Who is this for?"/>
+          </div>
+          <div class="form-group">
+            <label>Occasion</label>
+            <select id="occasion">
+              <option value="">Select occasion</option>
+              <option>Birthday</option>
+              <option>Anniversary</option>
+              <option>Wedding</option>
+              <option>Baby Shower</option>
+              <option>Graduation</option>
+              <option>Eid</option>
+              <option>Just Because</option>
+              <option>Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row full">
+          <div class="form-group">
+            <label>Delivery Address *</label>
+            <textarea id="address" placeholder="Full delivery address including city"></textarea>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Preferred Delivery Date</label>
+            <input type="date" id="deliveryDate"/>
+          </div>
+          <div class="form-group">
+            <label>Gift Message</label>
+            <input type="text" id="giftMessage" placeholder="A special note…"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payment -->
+      <div class="form-section">
+        <div class="form-section-title"><div class="icon">💳</div> Payment Method</div>
+        <div class="payment-options" id="paymentOptions">
+          <div class="payment-opt selected" onclick="selectPayment(this,'Cash on Delivery')">
+            <input type="radio" name="payment" checked/>
+            <span class="pay-icon">💵</span>
+            <div class="pay-label">Cash on Delivery</div>
+          </div>
+          <div class="payment-opt" onclick="selectPayment(this,'EasyPaisa')">
+            <input type="radio" name="payment"/>
+            <span class="pay-icon">📱</span>
+            <div class="pay-label">EasyPaisa</div>
+          </div>
+          <div class="payment-opt" onclick="selectPayment(this,'JazzCash')">
+            <input type="radio" name="payment"/>
+            <span class="pay-icon">🏦</span>
+            <div class="pay-label">JazzCash</div>
+          </div>
+          <div class="payment-opt" onclick="selectPayment(this,'Bank Transfer')">
+            <input type="radio" name="payment"/>
+            <span class="pay-icon">🔁</span>
+            <div class="pay-label">Bank Transfer</div>
+          </div>
+        </div>
+      </div>
+
+      <button class="place-order-btn" id="placeOrderBtn" onclick="placeOrder()">
+        ✦ Confirm &amp; Place Order
+      </button>
+    </div>
+
+    <!-- Right: order recap -->
+    <div class="checkout-summary">
+      <div class="summary-title">Your Order</div>
+      <div id="checkoutItemsList"></div>
+      <div class="summary-row" style="margin-top:14px;"><span>Subtotal</span><span id="co-subtotal">PKR 0</span></div>
+      <div class="summary-row"><span>Gift Wrap</span><span id="co-wrap">—</span></div>
+      <div class="summary-row"><span>Delivery</span><span>PKR 200</span></div>
+      <div class="summary-row total"><span>Total</span><span id="co-total">PKR 0</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SUCCESS VIEW ══ -->
+<div class="view" id="view-success">
+  <div class="success-view">
+    <div class="success-icon">✦</div>
+    <h2>Order Placed!</h2>
+    <p>Thank you for shopping with Don Trove.</p>
+    <p>Your reference number is:</p>
+    <div class="order-ref-badge" id="successRef">DT-000000</div>
+    <p class="success-note">
+      We'll contact you shortly to confirm your order. Expect your gift to arrive beautifully wrapped and right on time. 💜
+    </p>
+    <button class="back-shop-btn" onclick="resetAll()">Continue Shopping</button>
+  </div>
+</div>
+
+<!-- ══ ADMIN / MANAGE VIEW ══ -->
+<!-- Access via: index.html#manage-dt-admin -->
+<div class="view" id="view-manage">
+  <div class="manage-header">
+    <p class="section-title" style="margin:0">Manage Products</p>
+    <span class="admin-label">🔒 Admin only</span>
+  </div>
+  <div class="manage-info-banner">
+    📋 Products are managed directly in your <strong>Google Sheet</strong>.<br/>
+    Open your sheet → <em>Products</em> tab → Add/edit rows.<br/>
+    Columns: <strong>Name | Price | Description | Image URL | Active (YES/NO)</strong><br/>
+    <a href="https://docs.google.com/spreadsheets" target="_blank" rel="noopener">Open Google Sheets →</a>
+  </div>
+  <div id="manageList">
+    <div class="loading-wrap"><div class="spinner"></div><p>Loading products…</p></div>
+  </div>
+</div>
+
+<!-- ══ TOAST ══ -->
+<div class="toast" id="toast" role="alert" aria-live="polite"></div>
+
+<script src="js/app.js"></script>
+</body>
+</html>
