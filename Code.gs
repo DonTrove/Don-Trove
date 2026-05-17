@@ -14,7 +14,7 @@
  *
  * SHEET STRUCTURE:
  * The script auto-creates two sheets on first run:
- *   - "Products"  → Name | Price | Description | Image URL | Active
+ *   - "Products"  → Name | Price | Description | Image URL | Category | Active
  *   - "Orders"    → All order fields
  */
 
@@ -29,26 +29,38 @@ function getSpreadsheet() {
 }
 
 // ══ GET — returns active products as JSON ══════════════
+// Columns: Name(0) | Price(1) | Description(2) | Image URL(3) | Category(4) | Active(5)
 function doGet(e) {
   try {
     const ss    = getSpreadsheet();
-    const sheet = ss.getSheetByName(PRODUCTS_SHEET);
+    let sheet   = ss.getSheetByName(PRODUCTS_SHEET);
 
+    // Auto-create Products sheet with headers if missing
     if (!sheet) {
+      sheet = ss.insertSheet(PRODUCTS_SHEET);
+      sheet.appendRow(['Name', 'Price', 'Description', 'Image URL', 'Category', 'Active']);
+      sheet.setFrozenRows(1);
       return jsonResponse([]);
     }
 
-    const data  = sheet.getDataRange().getValues();
-    const headers = data[0]; // Name, Price, Description, Image URL, Active
+    const data = sheet.getDataRange().getValues();
+
+    // Support both old layout (5 cols, Active at index 4)
+    // and new layout (6 cols, Category at index 4, Active at index 5)
+    const hasCategory = data[0].length >= 6;
 
     const products = data
       .slice(1)
-      .filter(row => String(row[4]).toUpperCase() === 'YES' && row[0])
+      .filter(row => {
+        const activeVal = hasCategory ? row[5] : row[4];
+        return String(activeVal).toUpperCase() === 'YES' && row[0];
+      })
       .map(row => ({
         name:        row[0],
         price:       row[1],
         description: row[2],
         imageUrl:    row[3],
+        category:    hasCategory ? String(row[4]).trim() : '',
       }));
 
     return jsonResponse(products);
