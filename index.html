@@ -38,11 +38,16 @@
 </div>
 
 <!-- ══ TABS ══ -->
-<div class="tabs-wrap" id="tabsBar">
-  <button class="tab active" data-view="shop" onclick="showView('shop')">🛍 Shop</button>
-  <button class="tab" data-view="cart" onclick="showView('cart')">🛒 Cart</button>
-  <button class="tab" data-view="checkout" onclick="showView('checkout')" id="checkoutTab" style="display:none">📋 Details</button>
+<div class="tabs-wrap">
+  <div class="search-bar-wrap">
+    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+    </svg>
+    <input class="search-bar" id="searchInput" type="text" placeholder="Search gifts…" oninput="filterProducts()">
+  </div>
+  <div class="tabs-row" id="catTabs"></div>
 </div>
+<div class="results-meta" id="resultsMeta"></div>
 
 <!-- ══ SHOP VIEW ══ -->
 <div class="view active" id="view-shop">
