@@ -1,6 +1,3 @@
-
-\
-`
 :root {
   --plum:       #2D0A4E;
   --royal:      #4B1A8C;
@@ -13,6 +10,8 @@
   --text:       #1A0630;
   --muted:      #7A6890;
   --white:      #FFFFFF;
+  --beige:      #F5F0E8;
+  --beige-soft: #EDE8DC;
   --shadow:     0 4px 32px rgba(75, 26, 140, 0.13);
   --shadow-lg:  0 12px 60px rgba(45, 10, 78, 0.22);
 }
@@ -50,17 +49,18 @@ header {
   height: 68px;
 }
 
+/* ── CHANGED: brand text → beige ── */
 .brand {
   font-family: 'Cormorant Garamond', serif;
   font-size: 1.8rem;
   font-weight: 300;
   letter-spacing: 0.18em;
-  color: var(--gold-light);
+  color: var(--beige);           /* was --gold-light */
   text-transform: uppercase;
   text-decoration: none;
 }
 .brand span {
-  color: var(--lavender);
+  color: var(--beige-soft);      /* was --lavender */
   font-style: italic;
   font-weight: 400;
 }
@@ -71,6 +71,7 @@ nav {
   gap: 8px;
 }
 
+/* ── CHANGED: nav button text → beige ── */
 .nav-btn {
   background: none;
   border: none;
@@ -80,15 +81,15 @@ nav {
   font-weight: 500;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--lavender);
+  color: var(--beige);           /* was --lavender */
   padding: 8px 18px;
   border-radius: 40px;
   transition: all 0.25s;
 }
 .nav-btn:hover,
 .nav-btn.active {
-  background: rgba(196, 168, 232, 0.15);
-  color: var(--white);
+  background: rgba(245, 240, 232, 0.15);
+  color: var(--beige);           /* was --white */
 }
 .nav-btn.cart-btn {
   background: var(--gold);
@@ -114,16 +115,71 @@ nav {
 }
 .cart-badge.show { display: flex; }
 
-<!-- Hero section — replace whatever you have with this -->
-<section class="hero">
-  <div class="hero-orb hero-orb-1"></div>
-  <div class="hero-orb hero-orb-2"></div>
-  <div class="hero-content">
-    <div class="hero-tag">✦ Curated With Love</div>
-    <h1>Le Tresor De <em>Misfah.</em></h1>
-    <p>Each gift is carefully selected to delight the ones you love</p>
-  </div>
-</section>
+/* ══ HERO ══ */
+/* ── CHANGED: hero background → deep purple gradient ── */
+.hero {
+  background: linear-gradient(135deg, var(--plum) 0%, var(--royal) 60%, var(--violet) 100%);
+  position: relative;
+  overflow: hidden;
+  padding: 120px 24px 80px;
+  text-align: center;
+}
+
+/* Decorative orbs stay but now show on purple bg */
+.hero-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.35;
+  pointer-events: none;
+}
+.hero-orb-1 {
+  width: 520px; height: 520px;
+  background: radial-gradient(circle, var(--violet), transparent 70%);
+  top: -160px; left: -120px;
+}
+.hero-orb-2 {
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, var(--gold), transparent 70%);
+  bottom: -120px; right: -80px;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+}
+
+.hero-tag {
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold-light);
+  margin-bottom: 18px;
+}
+
+/* ── CHANGED: hero heading & subtitle → beige/cream so visible on purple ── */
+.hero h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2.4rem, 6vw, 4.2rem);
+  font-weight: 300;
+  color: var(--beige);           /* was dark/default */
+  letter-spacing: 0.04em;
+  line-height: 1.1;
+  margin-bottom: 16px;
+}
+.hero h1 em {
+  font-style: italic;
+  color: var(--gold-light);
+}
+.hero p {
+  font-size: 1rem;
+  color: var(--beige-soft);
+  opacity: 0.85;
+  max-width: 480px;
+  margin: 0 auto;
+}
 
 /* ══ TABS + SEARCH TOOLBAR ══ */
 .tabs-wrap {
