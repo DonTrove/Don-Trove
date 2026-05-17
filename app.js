@@ -1,6 +1,6 @@
 // ── CONFIG ───────────────────────────────────────────────────────────────────
 const SHEET_PRODUCTS_URL = "https://opensheet.elk.sh/1l1pIsSdVIbbu0AEEEJvDhlhinA4nGimT-ZSBGX0oLbY/Products";
-const SHEET_ORDERS_URL   = "https://script.google.com/macros/s/AKfycbyrTW1uuvTQL4HPw-RYpdg7uupPgpGQNR8tDN0lnPvwKiZRn74UwmRAWUtS5oYhgixR-w/exec";
+const SHEET_ORDERS_URL   = "https://script.google.com/macros/s/AKfycbz6M3K2dTjWGDCqTCtrYAZkXtQf8H_gIGGwFVJ7CWNrRDxf2Le8fe3otawbdzSu_Qfa3w/exec";
 
 // ── MOCK DATA ─────────────────────────────────────────────────────────────────
 const MOCK_PRODUCTS = [
@@ -282,12 +282,20 @@ async function submitOrder() {
   };
 
   try {
-    await fetch(SHEET_ORDERS_URL, {
-      method: "POST",
-      mode: "no-cors",
-      body: JSON.stringify(payload),
-      headers: { "Content-Type": "application/json" },
-    });
+    const res = await fetch(SHEET_ORDERS_URL, {
+  method: "POST",
+  body: JSON.stringify(payload),
+  headers: { "Content-Type": "application/json" },
+});
+
+const result = await res.json();
+
+if (!result.success) {
+  showToast(`⚠️ Order failed: ${result.error || "Unknown error"}`);
+  btn.disabled = false;
+  btn.textContent = "Place Order →";
+  return;
+}
   } catch (_) { /* no-cors swallows the response — order still goes through */ }
 
   btn.disabled = false;
