@@ -9,12 +9,11 @@
    SHEET_ORDERS_URL   : your Google Apps Script
                         web-app deployment URL
    ═══════════════════════════════════════════════════ */
-
 const SHEET_PRODUCTS_URL =
-  "https://opensheet.elk.sh/1l1pIsSdVIbbu0AEEEJvDhlhinA4nGimT-ZSBGX0oLbY/Products";
+  "https://docs.google.com/spreadsheets/d/1l1pIsSdVIbbu0AEEEJvDhlhinA4nGimT-ZSBGX0oLbY/edit?gid=0#gid=0";
 
 const SHEET_ORDERS_URL =
-  "https://script.google.com/macros/s/AKfycbz6M3K2dTjWGDCqTCtrYAZkXtQf8H_gIGGwFVJ7CWNrRDxf2Le8fe3otawbdzSu_Qfa3w/exec";
+  "https://script.google.com/macros/s/AKfycbxckyMVeHv_G-qtPoGkDT2D0EWonGqMa75LPyvg_-6yNd3n4MajEVCmeBdG7aOdIQARCg/exec";
 
 /* ── Fallback products (shown if Sheet fails) ───── */
 const MOCK_PRODUCTS = [
