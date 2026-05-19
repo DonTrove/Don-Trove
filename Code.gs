@@ -1,228 +1,188 @@
 /**
- * ══════════════════════════════════════════════════════
- *  DON TROVE — Google Apps Script
- *  Paste this entire file into:
- *  Google Sheet → Extensions → Apps Script → Code.gs
+ * ═══════════════════════════════════════════════════════════
+ *  DON TROVE — Code.gs  (Google Apps Script)
+ * ═══════════════════════════════════════════════════════════
  *
- *  Then: Deploy → New Deployment → Web App
- *    Execute as: Me
- *    Who has access: Anyone
- *  Copy the deployment URL → paste into app.js CONFIG.SHEET_URL
- * ══════════════════════════════════════════════════════
+ *  HOW TO DEPLOY
+ *  ─────────────
+ *  1. Open your Google Sheet → Extensions → Apps Script
+ *  2. Paste this entire file into Code.gs (replace any
+ *     existing content)
+ *  3. Save (Ctrl + S)
+ *  4. Click "Deploy" → "New deployment"
+ *     • Type      : Web app
+ *     • Execute as: Me
+ *     • Who has access: Anyone
+ *  5. Copy the deployment URL and paste it into app.js as
+ *     SHEET_ORDERS_URL
+ *  6. Re-deploy after any code changes ("Manage deployments"
+ *     → edit → new version)
  *
- *  SHEET SETUP — create two tabs named exactly:
+ *  GOOGLE SHEET STRUCTURE
+ *  ──────────────────────
+ *  Tab 1 — "Products"   (read by opensheet.elk.sh)
+ *    Columns: id | name | category | description |
+ *             price | imageUrl | featured
  *
- *  Tab 1: "Products"
- *  Columns: Name | Price | Description | Image URL | Category | Active
- *  Example row: Notebook | 2000 | Textured notebook | https://... | Notebooks | YES
- *
- *  Tab 2: "Orders"
- *  (leave it empty — headers are added automatically)
- * ══════════════════════════════════════════════════════
+ *  Tab 2 — "Orders"     (written by this script)
+ *    Auto-created on first order if it doesn't exist.
+ *    Columns: Timestamp | Order Ref | Name | Phone |
+ *             City | Address | Items | Subtotal |
+ *             Delivery Fee | Total | Payment | Notes
+ * ═══════════════════════════════════════════════════════════
  */
 
-const SPREADSHEET_ID = SpreadsheetApp.getActiveSpreadsheet().getId();
+/* ── Sheet / column config ──────────────────────── */
+var ORDERS_SHEET_NAME = "Orders";
 
-// ── Column headers for the Orders sheet ──
-const ORDER_HEADERS = [
-  'Order Ref', 'Date & Time',
-  'Sender Name', 'Phone', 'Email', 'City',
-  'Recipient Name', 'Occasion', 'Delivery Address',
-  'Delivery Date', 'Gift Message', 'Notes',
-  'Items', 'Subtotal (PKR)', 'Gift Wrap',
-  'Delivery Fee (PKR)', 'Total (PKR)', 'Payment Method',
-  'Status'
+var ORDER_HEADERS = [
+  "Timestamp",
+  "Order Ref",
+  "Name",
+  "Phone",
+  "City",
+  "Address",
+  "Items",
+  "Subtotal (PKR)",
+  "Delivery Fee (PKR)",
+  "Total (PKR)",
+  "Payment Method",
+  "Notes",
 ];
 
-// ══════════════════════════════════════════
-//  GET — returns products list as JSON
-// ══════════════════════════════════════════
-function doGet(e) {
-  const action = e && e.parameter && e.parameter.action;
-
-  if (action === 'products' || !action) {
-    return getProducts();
-  }
-
-  return jsonResponse({ error: 'Unknown action' });
-}
-
-function getProducts() {
-  try {
-    const ss    = SpreadsheetApp.openById(SPREADSHEET_ID);
-    const sheet = ss.getSheetByName('Products');
-
-    if (!sheet) {
-      return jsonResponse({ error: 'Products sheet not found' });
-    }
-
-    const data = sheet.getDataRange().getValues();
-    if (data.length < 2) return jsonResponse([]);
-
-    const headers = data[0].map(h => String(h).trim().toLowerCase().replace(/\s+/g, ''));
-    const rows    = data.slice(1);
-
-    const products = rows
-      .map(row => {
-        const obj = {};
-        headers.forEach((h, i) => { obj[h] = String(row[i] || '').trim(); });
-        return obj;
-      })
-      // Only return active products (Active column = YES or empty means active)
-      .filter(p => p.active !== 'NO' && p.name)
-      .map(p => ({
-        name:        p.name,
-        price:       p.price,
-        description: p.description,
-        imageUrl:    p.imageurl || p['image url'] || p.image || '',
-        category:    p.category || 'Other',
-        active:      p.active || 'YES',
-      }));
-
-    return jsonResponse(products);
-
-  } catch (err) {
-    Logger.log('getProducts error: ' + err);
-    return jsonResponse({ error: err.toString() });
-  }
-}
-
-// ══════════════════════════════════════════
-//  POST — saves an order to Orders sheet
-// ══════════════════════════════════════════
+/* ═══════════════════════════════════════════════════
+   doPost — receives order from the storefront
+   ═══════════════════════════════════════════════════ */
 function doPost(e) {
   try {
-    const body    = JSON.parse(e.postData.contents);
-    const action  = body.action;
+    var raw  = e.postData ? e.postData.contents : "{}";
+    var data = JSON.parse(raw);
 
-    if (action === 'order') {
-      return saveOrder(body);
+    if (data.action === "order") {
+      saveOrder(data);
     }
 
-    return jsonResponse({ error: 'Unknown action' });
+    return jsonResponse({ status: "ok", orderRef: data.orderRef || "" });
 
   } catch (err) {
-    Logger.log('doPost error: ' + err);
-    return jsonResponse({ error: err.toString() });
+    Logger.log("doPost error: " + err.message);
+    return jsonResponse({ status: "error", message: err.message });
   }
 }
 
+/* ═══════════════════════════════════════════════════
+   doGet — health-check / CORS preflight
+   ═══════════════════════════════════════════════════ */
+function doGet() {
+  return jsonResponse({ status: "ok", service: "Don Trove Orders" });
+}
+
+/* ═══════════════════════════════════════════════════
+   saveOrder — appends one row to the Orders sheet
+   ═══════════════════════════════════════════════════ */
 function saveOrder(data) {
-  const ss    = SpreadsheetApp.openById(SPREADSHEET_ID);
-  let sheet   = ss.getSheetByName('Orders');
+  var ss    = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName(ORDERS_SHEET_NAME);
 
-  // Create Orders sheet + headers if missing
+  /* Create the sheet + header row if it doesn't exist yet */
   if (!sheet) {
-    sheet = ss.insertSheet('Orders');
+    sheet = ss.insertSheet(ORDERS_SHEET_NAME);
     sheet.appendRow(ORDER_HEADERS);
-    sheet.getRange(1, 1, 1, ORDER_HEADERS.length)
-      .setBackground('#4B1A8C')
-      .setFontColor('#FFFFFF')
-      .setFontWeight('bold');
+
+    /* Style the header row */
+    var headerRange = sheet.getRange(1, 1, 1, ORDER_HEADERS.length);
+    headerRange.setBackground("#b84060");
+    headerRange.setFontColor("#ffffff");
+    headerRange.setFontWeight("bold");
     sheet.setFrozenRows(1);
   }
 
-  // If sheet exists but has no headers, add them
-  const firstCell = sheet.getRange(1, 1).getValue();
-  if (!firstCell || firstCell !== 'Order Ref') {
-    sheet.insertRowBefore(1);
-    sheet.getRange(1, 1, 1, ORDER_HEADERS.length).setValues([ORDER_HEADERS])
-      .setBackground('#4B1A8C')
-      .setFontColor('#FFFFFF')
-      .setFontWeight('bold');
-    sheet.setFrozenRows(1);
-  }
-
-  const row = [
-    data.orderRef       || '',
-    data.dateTime       || new Date().toLocaleString(),
-    data.senderName     || '',
-    data.phone          || '',
-    data.email          || '',
-    data.city           || '',
-    data.recipientName  || '',
-    data.occasion       || '',
-    data.address        || '',
-    data.deliveryDate   || '',
-    data.giftMessage    || '',
-    data.notes          || '',
-    data.items          || '',
-    data.subtotal       || 0,
-    data.giftWrap       || 'No',
-    data.deliveryFee    || 200,
-    data.total          || 0,
-    data.paymentMethod  || '',
-    'New',              // Status — you can update this manually in the sheet
+  /* Build the data row */
+  var row = [
+    new Date(),                          // Timestamp
+    data.orderRef        || "",          // Order Ref
+    data.senderName      || "",          // Name
+    data.phone           || "",          // Phone
+    data.city            || "",          // City
+    data.address         || "",          // Address
+    data.items           || "",          // Items
+    data.subtotal        || 0,           // Subtotal
+    data.deliveryFee     || 200,         // Delivery Fee
+    data.total           || 0,           // Total
+    data.paymentMethod   || "COD",       // Payment Method
+    data.notes           || "",          // Notes
   ];
 
   sheet.appendRow(row);
 
-  // Auto-resize columns for readability
+  /* Auto-resize columns for readability */
   sheet.autoResizeColumns(1, ORDER_HEADERS.length);
 
-  // Send email notification (optional — set your email below)
-  sendNotificationEmail(data);
-
-  return jsonResponse({ success: true, orderRef: data.orderRef });
+  Logger.log("Order saved: " + data.orderRef);
 }
 
-// ══════════════════════════════════════════
-//  EMAIL NOTIFICATION (optional)
-//  Set YOUR_EMAIL below to receive an email
-//  every time a new order is placed.
-//  Leave blank to disable.
-// ══════════════════════════════════════════
-const NOTIFY_EMAIL = ''; // e.g. 'yourname@gmail.com'
-
-function sendNotificationEmail(data) {
-  if (!NOTIFY_EMAIL) return;
-
-  try {
-    const subject = `🛍️ New Don Trove Order — ${data.orderRef}`;
-    const body = `
-New order received!
-
-Order Ref:    ${data.orderRef}
-Date & Time:  ${data.dateTime}
-
-── CUSTOMER ──
-Name:         ${data.senderName}
-Phone:        ${data.phone}
-Email:        ${data.email}
-City:         ${data.city}
-
-── RECIPIENT ──
-Name:         ${data.recipientName}
-Occasion:     ${data.occasion}
-Address:      ${data.address}
-Delivery Date:${data.deliveryDate}
-Gift Message: ${data.giftMessage}
-
-── ORDER ──
-Items:        ${data.items}
-Subtotal:     PKR ${data.subtotal}
-Gift Wrap:    ${data.giftWrap}
-Delivery Fee: PKR ${data.deliveryFee}
-TOTAL:        PKR ${data.total}
-Payment:      ${data.paymentMethod}
-
-Notes: ${data.notes || '—'}
-
-View all orders in your Google Sheet.
-    `.trim();
-
-    GmailApp.sendEmail(NOTIFY_EMAIL, subject, body);
-  } catch (err) {
-    Logger.log('Email notification failed: ' + err);
-  }
-}
-
-// ══════════════════════════════════════════
-//  HELPER — JSON response with CORS headers
-// ══════════════════════════════════════════
-function jsonResponse(data) {
-  const output = ContentService
-    .createTextOutput(JSON.stringify(data))
+/* ═══════════════════════════════════════════════════
+   jsonResponse — helper to return JSON with CORS
+   ═══════════════════════════════════════════════════ */
+function jsonResponse(obj) {
+  var output = ContentService
+    .createTextOutput(JSON.stringify(obj))
     .setMimeType(ContentService.MimeType.JSON);
   return output;
+}
+
+/* ═══════════════════════════════════════════════════
+   OPTIONAL UTILITIES
+   ═══════════════════════════════════════════════════ */
+
+/**
+ * sendOrderConfirmationEmail
+ * ──────────────────────────
+ * Uncomment and call this inside saveOrder() if you want
+ * to receive an email notification for every new order.
+ *
+ * Usage inside saveOrder():
+ *   sendOrderConfirmationEmail(data);
+ */
+/*
+function sendOrderConfirmationEmail(data) {
+  var recipient = Session.getActiveUser().getEmail(); // your email
+  var subject   = "New Don Trove Order — " + data.orderRef;
+  var body      =
+    "New order received!\n\n" +
+    "Ref:     " + data.orderRef      + "\n" +
+    "Name:    " + data.senderName    + "\n" +
+    "Phone:   " + data.phone         + "\n" +
+    "City:    " + data.city          + "\n" +
+    "Address: " + data.address       + "\n" +
+    "Items:   " + data.items         + "\n" +
+    "Total:   PKR " + data.total     + "\n" +
+    "Notes:   " + (data.notes || "—") + "\n";
+
+  MailApp.sendEmail(recipient, subject, body);
+}
+*/
+
+/**
+ * testSaveOrder
+ * ─────────────
+ * Run this function manually from the Apps Script editor
+ * (Run → testSaveOrder) to verify the sheet setup works
+ * before going live.
+ */
+function testSaveOrder() {
+  saveOrder({
+    orderRef:      "DT-TEST001",
+    senderName:    "Test Customer",
+    phone:         "0300-1234567",
+    city:          "Karachi",
+    address:       "123 Test Street",
+    items:         "Digital Planner x1, Textured Notebook x2",
+    subtotal:      5500,
+    deliveryFee:   200,
+    total:         5700,
+    paymentMethod: "COD",
+    notes:         "Gift wrapping please",
+  });
+  Logger.log("Test order written to sheet.");
 }
