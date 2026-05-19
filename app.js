@@ -10,7 +10,7 @@
                         web-app deployment URL
    ═══════════════════════════════════════════════════ */
 const SHEET_PRODUCTS_URL =
-"https://docs.google.com/spreadsheets/d/1l1pIsSdVIbbu0AEEEJvDhlhinA4nGimT-ZSBGX0oLbY/edit?gid=962807164#gid=962807164";
+"https://opensheet.elk.sh/1l1pIsSdVIbbu0AEEEJvDhlhinA4nGimT-ZSBGX0oLbY /Products";
 
 const SHEET_ORDERS_URL =
 "https://script.google.com/macros/s/AKfycbzaabs26C3GlSFGR8yNy2UHC5lhELkHT6OE0tuHWTcRqRiNxeRUt_x7n3OmF1NhfdpF2g/exec";
