@@ -25,7 +25,7 @@ const ORDERS_SHEET   = 'Orders';
 // ───────────────────────────────────────────────────────
 
 function getSpreadsheet() {
-  return SpreadsheetApp.openById(SPREADSHEET_ID);
+  return SpreadsheetApp.openById(1l1pIsSdVIbbu0AEEEJvDhlhinA4nGimT-ZSBGX0oLbY);
 }
 
 // ══ GET — returns active products as JSON ══════════════
