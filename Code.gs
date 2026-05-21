@@ -19,13 +19,13 @@
  */
 
 // ── CONFIG ─────────────────────────────────────────────
-const SPREADSHEET_ID = '1l1pIsSdVIbbu0AEEEJvDhlhinA4nGimT-ZSBGX0oLbY'; // ← Replace this!
+const SPREADSHEET_ID = 'YOUR_SPREADSHEET_ID_HERE'; // ← Replace this!
 const PRODUCTS_SHEET = 'Products';
 const ORDERS_SHEET   = 'Orders';
 // ───────────────────────────────────────────────────────
 
 function getSpreadsheet() {
-  return SpreadsheetApp.openById('1l1pIsSdVIbbu0AEEEJvDhlhinA4nGimT-ZSBGX0oLbY');
+  return SpreadsheetApp.openById(SPREADSHEET_ID);
 }
 
 // ══ GET — returns active products as JSON ══════════════
