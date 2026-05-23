@@ -94,7 +94,6 @@ function buildCategoryTabs() {
 function renderProducts() {
   const query    = (document.getElementById("searchInput")?.value || "").toLowerCase();
   const grid     = document.getElementById("productsGrid");
-  const meta     = document.getElementById("resultsMeta");
 
   const filtered = allProducts.filter(p => {
     const matchCat    = activeCategory === "All" || p.category === activeCategory;
@@ -103,12 +102,6 @@ function renderProducts() {
       (p.description || "").toLowerCase().includes(query);
     return matchCat && matchSearch;
   });
-
-  if (meta) {
-    meta.innerHTML = filtered.length
-      ? `Showing <strong>${filtered.length}</strong> gift${filtered.length !== 1 ? "s" : ""}`
-      : "";
-  }
 
   if (filtered.length === 0) {
     grid.innerHTML = `<p style="text-align:center;color:var(--muted);padding:60px 20px;grid-column:1/-1;font-style:italic;">No gifts match your search.</p>`;
