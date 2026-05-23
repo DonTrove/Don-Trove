@@ -237,28 +237,27 @@ nav {
 
 /* ── HAMBURGER BUTTON ── */
 .hamburger-btn {
-  background: var(--royal);
+  background: none;
   border: none;
-  border-radius: 8px;
-  width: 40px;
-  height: 40px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
-  font-size: 20px;
+  color: var(--beige);
+  font-size: 22px;
   flex-shrink: 0;
-  transition: background 0.2s;
+  padding: 6px;
+  transition: color 0.2s;
+  line-height: 1;
 }
-.hamburger-btn:hover { background: var(--plum); }
+.hamburger-btn:hover { color: var(--white); }
 
 /* ── CATEGORY DROPDOWN ── */
 .cat-dropdown {
   display: none;
   position: absolute;
-  top: 48px;
-  right: 0;
+  top: 60px;
+  left: 0;
   background: var(--white);
   border: 1px solid var(--lavender);
   border-radius: 12px;
@@ -864,11 +863,26 @@ nav {
 
 <!-- ══ HEADER ══ -->
 <header>
-  <a class="brand" href="#">
-    <span>Don</span> Trove
-  </a>
+  <div style="display:flex;align-items:center;gap:10px;position:relative;">
+    <!-- Hamburger -->
+    <div style="position:relative;">
+      <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleCatMenu()" aria-label="Filter by category">☰</button>
+      <div class="cat-dropdown" id="catDropdown">
+        <div id="catTabs"></div>
+      </div>
+    </div>
+    <!-- Logo image (no background, blended) -->
+    <img
+      src="Logo__4_.png"
+      alt="Le Tresor de Misfah logo"
+      style="height:44px;width:auto;mix-blend-mode:screen;opacity:0.92;filter:brightness(1.15) saturate(0.7);"
+    />
+    <!-- Brand text -->
+    <a class="brand" href="#" style="font-size:1.45rem;">
+      <span>Don</span> Trove
+    </a>
+  </div>
   <nav>
-    <button class="nav-btn active" onclick="showView('shop')">Shop</button>
     <button class="nav-btn cart-btn" onclick="showView('cart')">
       🛍️ Cart
       <span class="cart-badge" id="cartBadge">0</span>
@@ -886,28 +900,13 @@ nav {
   </div>
 </div>
 
-<!-- ══ SEARCH + HAMBURGER TOOLBAR ══ -->
+<!-- ══ SEARCH TOOLBAR ══ -->
 <div class="tabs-wrap">
-  <div style="display:flex;align-items:center;gap:12px;width:100%;max-width:500px;">
-
-    <!-- Search bar -->
-    <div class="search-bar-wrap" style="flex:1;">
-      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-      </svg>
-      <input class="search-bar" id="searchInput" type="text" placeholder="Search gifts…" oninput="filterProducts()">
-    </div>
-
-    <!-- Hamburger category menu -->
-    <div style="position:relative;">
-      <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleCatMenu()" aria-label="Filter by category">
-        ☰
-      </button>
-      <div class="cat-dropdown" id="catDropdown">
-        <div id="catTabs"></div>
-      </div>
-    </div>
-
+  <div class="search-bar-wrap">
+    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+    </svg>
+    <input class="search-bar" id="searchInput" type="text" placeholder="Search gifts…" oninput="filterProducts()">
   </div>
 </div>
 
