@@ -1,6 +1,7 @@
 /**
  * Don Trove — app.js
  * Fetches products from Google Apps Script and handles cart + orders.
+ * Supports multi-image carousel via comma-separated Image URL column.
  */
 
 const CONFIG = {
@@ -16,13 +17,15 @@ let activeCategory = "All";
 let giftWrap       = false;
 let selectedPayment= "Cash on Delivery";
 
+// Tracks current slide index per product card: { productName: index }
+const carouselState = {};
+
 // ── Init ─────────────────────────────────────────────────────────────────────
 document.addEventListener("DOMContentLoaded", () => {
   loadProducts();
   renderCart();
   updateCartBadge();
 
-  // Close category dropdown when clicking outside
   document.addEventListener("click", (e) => {
     const btn = document.getElementById("hamburgerBtn");
     const dd  = document.getElementById("catDropdown");
@@ -38,7 +41,7 @@ function toggleCatMenu() {
   if (dd) dd.classList.toggle("open");
 }
 
-// ── Load Products from Apps Script ───────────────────────────────────────────
+// ── Load Products ─────────────────────────────────────────────────────────────
 async function loadProducts() {
   const grid = document.getElementById("productsGrid");
   grid.innerHTML = `<div class="loading-wrap"><div class="spinner"></div><p>Loading beautiful gifts…</p></div>`;
@@ -81,7 +84,6 @@ function buildCategoryTabs() {
       activeCategory = cat;
       document.querySelectorAll(".tab").forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
-      // Close dropdown after selecting
       const dd = document.getElementById("catDropdown");
       if (dd) dd.classList.remove("open");
       renderProducts();
@@ -92,8 +94,8 @@ function buildCategoryTabs() {
 
 // ── Render Product Grid ───────────────────────────────────────────────────────
 function renderProducts() {
-  const query    = (document.getElementById("searchInput")?.value || "").toLowerCase();
-  const grid     = document.getElementById("productsGrid");
+  const query  = (document.getElementById("searchInput")?.value || "").toLowerCase();
+  const grid   = document.getElementById("productsGrid");
 
   const filtered = allProducts.filter(p => {
     const matchCat    = activeCategory === "All" || p.category === activeCategory;
@@ -108,25 +110,108 @@ function renderProducts() {
     return;
   }
 
-  grid.innerHTML = filtered.map((p, i) => `
-    <div class="product-card" style="animation-delay:${i * 0.06}s">
-      <div class="product-img-wrap">
-        ${p.imageUrl
-          ? `<img src="${escHtml(p.imageUrl)}" alt="${escHtml(p.name)}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
-          : ""}
-        <div class="product-img-placeholder" style="${p.imageUrl ? "display:none" : ""}">🎁</div>
-      </div>
-      <div class="product-body">
-        ${p.category ? `<div style="font-size:0.72rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;">${escHtml(p.category)}</div>` : ""}
-        <div class="product-name">${escHtml(p.name)}</div>
-        ${p.description ? `<div class="product-desc">${escHtml(p.description)}</div>` : ""}
-        <div class="product-footer">
-          <span class="product-price">PKR ${Number(p.price).toLocaleString()}</span>
-          <button class="add-btn" onclick="addToCart(${i})">+ Add to Cart</button>
+  grid.innerHTML = filtered.map((p, i) => {
+    // Normalise images array — support both old (imageUrl string) and new (images array)
+    const images = (p.images && p.images.length > 0)
+      ? p.images
+      : (p.imageUrl ? [p.imageUrl] : []);
+
+    const key = escHtml(p.name);
+
+    // Initialise carousel state for this product
+    if (carouselState[p.name] === undefined) carouselState[p.name] = 0;
+
+    const hasMultiple = images.length > 1;
+
+    const imgSlides = images.length > 0
+      ? images.map((url, si) => `
+          <img
+            src="${escHtml(url)}"
+            alt="${escHtml(p.name)} image ${si + 1}"
+            class="carousel-slide${si === 0 ? ' active' : ''}"
+            loading="lazy"
+            onerror="this.style.display='none'"
+          />`).join("")
+      : "";
+
+    const dots = hasMultiple
+      ? `<div class="carousel-dots">
+          ${images.map((_, di) => `
+            <span
+              class="carousel-dot${di === 0 ? ' active' : ''}"
+              onclick="event.stopPropagation();goToSlide('${key}',${di})"
+            ></span>`).join("")}
+        </div>`
+      : "";
+
+    const arrows = hasMultiple
+      ? `<button class="carousel-arrow carousel-prev" onclick="event.stopPropagation();moveSlide('${key}',-1)">‹</button>
+         <button class="carousel-arrow carousel-next" onclick="event.stopPropagation();moveSlide('${key}',1)">›</button>`
+      : "";
+
+    return `
+      <div class="product-card" style="animation-delay:${i * 0.06}s">
+        <div class="product-img-wrap" id="carousel-${key}">
+          ${imgSlides}
+          ${images.length === 0 ? `<div class="product-img-placeholder">🎁</div>` : ""}
+          ${arrows}
+          ${dots}
         </div>
-      </div>
-    </div>
-  `).join("");
+        <div class="product-body">
+          ${p.category ? `<div style="font-size:0.72rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;">${escHtml(p.category)}</div>` : ""}
+          <div class="product-name">${escHtml(p.name)}</div>
+          ${p.description ? `<div class="product-desc">${escHtml(p.description)}</div>` : ""}
+          <div class="product-footer">
+            <span class="product-price">PKR ${Number(p.price).toLocaleString()}</span>
+            <button class="add-btn" onclick="addToCart(${i})">+ Add to Cart</button>
+          </div>
+        </div>
+      </div>`;
+  }).join("");
+}
+
+// ── Carousel Controls ─────────────────────────────────────────────────────────
+
+/**
+ * Move slide by delta (+1 next, -1 prev) for a given product key.
+ */
+function moveSlide(key, delta) {
+  const wrap = document.getElementById(`carousel-${key}`);
+  if (!wrap) return;
+
+  const slides = wrap.querySelectorAll(".carousel-slide");
+  const dots   = wrap.querySelectorAll(".carousel-dot");
+  if (slides.length === 0) return;
+
+  let current = carouselState[key] || 0;
+  slides[current].classList.remove("active");
+  if (dots[current]) dots[current].classList.remove("active");
+
+  current = (current + delta + slides.length) % slides.length;
+  carouselState[key] = current;
+
+  slides[current].classList.add("active");
+  if (dots[current]) dots[current].classList.add("active");
+}
+
+/**
+ * Jump directly to a specific slide index.
+ */
+function goToSlide(key, index) {
+  const wrap = document.getElementById(`carousel-${key}`);
+  if (!wrap) return;
+
+  const slides = wrap.querySelectorAll(".carousel-slide");
+  const dots   = wrap.querySelectorAll(".carousel-dot");
+  if (slides.length === 0) return;
+
+  const current = carouselState[key] || 0;
+  slides[current].classList.remove("active");
+  if (dots[current]) dots[current].classList.remove("active");
+
+  carouselState[key] = index;
+  slides[index].classList.add("active");
+  if (dots[index]) dots[index].classList.add("active");
 }
 
 // ── Search ────────────────────────────────────────────────────────────────────
@@ -160,7 +245,6 @@ function addToCart(gridIndex) {
   updateCartBadge();
   showToast(`🎁 "${product.name}" added to cart`);
 
-  // Flash button
   const btns = document.querySelectorAll(".add-btn");
   if (btns[gridIndex]) {
     const btn = btns[gridIndex];
@@ -238,9 +322,9 @@ function removeFromCart(index) {
 }
 
 function updateSummary() {
-  const subtotal  = cart.reduce((a, b) => a + Number(b.price) * b.qty, 0);
-  const wrapFee   = giftWrap ? CONFIG.GIFT_WRAP : 0;
-  const total     = subtotal + CONFIG.DELIVERY_FEE + wrapFee;
+  const subtotal = cart.reduce((a, b) => a + Number(b.price) * b.qty, 0);
+  const wrapFee  = giftWrap ? CONFIG.GIFT_WRAP : 0;
+  const total    = subtotal + CONFIG.DELIVERY_FEE + wrapFee;
 
   const el = id => document.getElementById(id);
   if (el("summSubtotal")) el("summSubtotal").textContent = `PKR ${subtotal.toLocaleString()}`;
@@ -265,7 +349,6 @@ function updateSummary() {
   }
 }
 
-// Gift wrap checkbox
 document.addEventListener("change", e => {
   if (e.target.id === "giftWrapCheck") {
     giftWrap = e.target.checked;
@@ -273,21 +356,19 @@ document.addEventListener("change", e => {
   }
 });
 
-// ── Proceed to Checkout ───────────────────────────────────────────────────────
+// ── Checkout ──────────────────────────────────────────────────────────────────
 function proceedToCheckout() {
   if (cart.length === 0) return;
   updateSummary();
   showView("checkout");
 }
 
-// ── Payment Method ────────────────────────────────────────────────────────────
 function selectPayment(el, method) {
   selectedPayment = method;
   document.querySelectorAll(".payment-opt").forEach(o => o.classList.remove("selected"));
   el.classList.add("selected");
 }
 
-// ── Place Order ───────────────────────────────────────────────────────────────
 async function placeOrder() {
   const val = id => (document.getElementById(id)?.value || "").trim();
 
@@ -306,10 +387,10 @@ async function placeOrder() {
   btn.disabled = true;
   btn.textContent = "Placing Order…";
 
-  const subtotal  = cart.reduce((a, b) => a + Number(b.price) * b.qty, 0);
-  const wrapFee   = giftWrap ? CONFIG.GIFT_WRAP : 0;
-  const total     = subtotal + CONFIG.DELIVERY_FEE + wrapFee;
-  const orderRef  = "DT-" + Date.now();
+  const subtotal = cart.reduce((a, b) => a + Number(b.price) * b.qty, 0);
+  const wrapFee  = giftWrap ? CONFIG.GIFT_WRAP : 0;
+  const total    = subtotal + CONFIG.DELIVERY_FEE + wrapFee;
+  const orderRef = "DT-" + Date.now();
 
   const payload = {
     orderRef,
@@ -358,7 +439,6 @@ function showView(name) {
   const target = document.getElementById(`view-${name}`);
   if (target) target.classList.add("active");
 
-  // Highlight matching nav button
   document.querySelectorAll(".nav-btn:not(.cart-btn)").forEach(b => {
     b.classList.toggle("active", b.textContent.trim().toLowerCase().startsWith(name));
   });
@@ -367,7 +447,7 @@ function showView(name) {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-// ── Reset after order ─────────────────────────────────────────────────────────
+// ── Reset ─────────────────────────────────────────────────────────────────────
 function resetAll() {
   cart     = [];
   giftWrap = false;
