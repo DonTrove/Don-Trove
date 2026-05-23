@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwdLxaq6fbvbTM2yNtUl0mOaodAUebJZZBdFxFaVbiXXhP3vept-ojDtcZJMkLFUwfJ1Q/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxnk5xpS-Cw5GMaxbwqcy2NmaDN-MECn4_QBxhuH5NIgC_f_PiU2NCiE9pFoCPOJNSzzQ/exec";
 const DELIVERY_FEE = 200;
 const GIFT_WRAP_FEE = 300;
 
