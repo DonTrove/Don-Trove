@@ -827,13 +827,6 @@ nav {
 }
 
 /* ══ RESULTS META ══ */
-.results-meta {
-  text-align: center;
-  font-size: 0.8rem;
-  color: var(--muted);
-  margin-bottom: 24px;
-}
-.results-meta strong { color: var(--royal); }
 
 
 /* ══ ABOUT VIEW ══ */
@@ -1069,7 +1062,6 @@ nav {
   </div>
 </div>
 
-<div class="results-meta" id="resultsMeta"></div>
 
 <!-- ══ SHOP VIEW ══ -->
 <div class="view active" id="view-shop">
@@ -1328,7 +1320,7 @@ nav {
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
   const img = new Image();
-  img.src = 'Logo (4).png';
+  img.src = 'Logo__4_.png';
   img.onload = function() {
     const scale = 44 / img.naturalHeight;
     const w = Math.round(img.naturalWidth * scale);
