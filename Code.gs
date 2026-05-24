@@ -2,7 +2,7 @@
  * Don Trove — Google Apps Script Backend
  * =========================================
  * SHEET STRUCTURE — Products:
- *   Name | Price | Description | Image URL | Category | Active | Colors
+ *   Name | Price | Description | Image URL | Category | Active | Colors | Sizes
  *
  *   Image URL: comma-separated for carousel
  *     e.g. https://i.ibb.co/img1.jpg,https://i.ibb.co/img2.jpg
@@ -10,6 +10,10 @@
  *   Colors: comma-separated color names or hex codes
  *     e.g. Red,Navy Blue,#F5C2D0
  *     Leave blank if no colour options.
+ *
+ *   Sizes: comma-separated label:price pairs
+ *     e.g.  A5:500,A4:800,A3:1200
+ *     Single size / no size options → leave blank or write "none"
  *
  * SHEET STRUCTURE — Orders:
  *   Order Ref | Date/Time | Sender Name | Phone | Email |
@@ -34,7 +38,7 @@ function doGet(e) {
 
     if (!sheet) {
       sheet = ss.insertSheet(PRODUCTS_SHEET);
-      sheet.appendRow(['Name','Price','Description','Image URL','Category','Active','Colors']);
+      sheet.appendRow(['Name','Price','Description','Image URL','Category','Active','Colors','Sizes']);
       sheet.setFrozenRows(1);
       return jsonResponse([]);
     }
@@ -52,6 +56,7 @@ function doGet(e) {
       category:    headers.indexOf('category'),
       active:      headers.indexOf('active'),
       colors:      headers.indexOf('colors'),
+      sizes:       headers.indexOf('sizes'),
     };
 
     const products = rows.slice(1)
@@ -61,19 +66,34 @@ function doGet(e) {
         return hasName && active === 'YES';
       })
       .map(row => {
+        // ── Images (comma-separated) ──
         const rawImages = col.imageUrl >= 0 ? String(row[col.imageUrl]).trim() : '';
         const images    = rawImages.split(',').map(u => u.trim()).filter(Boolean);
 
+        // ── Colors (comma-separated) ──
         const rawColors = col.colors >= 0 ? String(row[col.colors]).trim() : '';
+
+        // ── Sizes: "A5:500,A4:800,A3:1200" → [{label:"A5", price:500}, ...]
+        // If blank or "none" → empty array (no size UI shown)
+        const rawSizes = col.sizes >= 0 ? String(row[col.sizes]).trim() : '';
+        const sizes = (rawSizes && rawSizes.toLowerCase() !== 'none')
+          ? rawSizes.split(',')
+              .map(s => {
+                const parts = s.trim().split(':');
+                return { label: parts[0].trim(), price: Number(parts[1]) || 0 };
+              })
+              .filter(s => s.label)
+          : [];
 
         return {
           name:        col.name        >= 0 ? String(row[col.name]).trim()        : '',
           price:       col.price       >= 0 ? Number(row[col.price])              : 0,
           description: col.description >= 0 ? String(row[col.description]).trim() : '',
           imageUrl:    images[0] || '',
-          images:      images,
+          images,
           category:    col.category    >= 0 ? String(row[col.category]).trim()    : '',
           colors:      rawColors,
+          sizes,                        // ← new: array of {label, price}
         };
       });
 
@@ -112,7 +132,7 @@ function doPost(e) {
       payload.deliveryDate  || '',
       payload.occasion      || '',
       payload.giftMessage   || '',
-      payload.items         || '',
+      payload.items         || '',   // now includes [size] and (color) per item
       payload.subtotal      || 0,
       payload.giftWrap      || 0,
       payload.deliveryFee   || 0,
