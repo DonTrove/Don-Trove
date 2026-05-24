@@ -76,11 +76,15 @@ function doGet(e) {
         // ── Sizes: "A5:500,A4:800,A3:1200" → [{label:"A5", price:500}, ...]
         // If blank or "none" → empty array (no size UI shown)
         const rawSizes = col.sizes >= 0 ? String(row[col.sizes]).trim() : '';
-        const sizes = (rawSizes && rawSizes.toLowerCase() !== 'none')
+        const basePrice = col.price >= 0 ? Number(row[col.price]) : 0;
+        const sizes = (rawSizes && rawSizes.toLowerCase() !== 'none' && rawSizes !== '')
           ? rawSizes.split(',')
               .map(s => {
                 const parts = s.trim().split(':');
-                return { label: parts[0].trim(), price: Number(parts[1]) || 0 };
+                const label = parts[0].trim();
+                // If price provided use it, otherwise fall back to base price
+                const price = parts.length > 1 ? Number(parts[1]) : basePrice;
+                return { label, price };
               })
               .filter(s => s.label)
           : [];
