@@ -459,8 +459,8 @@ nav { display: flex; align-items: center; gap: 8px; }
 }
 .color-swatches { display: flex; gap: 6px; flex-wrap: wrap; }
 .color-swatch {
-  width: 14px;
-  height: 14px;
+  width: 14px !important;
+  height: 14px !important;
   border-radius: 50%;
   cursor: pointer;
   border: 2px solid transparent;
