@@ -1,6 +1,6 @@
 /**
  * Don Trove — app.js
- * Multi-image carousel | Color swatches | Full-height product image
+ * Multi-image carousel | Color swatches | Size selector with per-size pricing
  */
 
 const CONFIG = {
@@ -15,8 +15,10 @@ let activeCategory = "All";
 let giftWrap       = false;
 let selectedPayment= "Cash on Delivery";
 
-// Carousel state: keyed by numeric product index (safe, no special chars)
-const carouselState = {};
+// Per-card state (keyed by filtered grid index)
+const carouselState  = {};
+const selectedColors = {};
+const selectedSizes  = {}; // { gridIndex: sizeIndex }
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 document.addEventListener("DOMContentLoaded", () => {
@@ -85,18 +87,22 @@ function buildCategoryTabs() {
   });
 }
 
-// ── Render Products ───────────────────────────────────────────────────────────
-function renderProducts() {
-  const query  = (document.getElementById("searchInput")?.value || "").toLowerCase();
-  const grid   = document.getElementById("productsGrid");
-
-  const filtered = allProducts.filter(p => {
+// ── Get Filtered List ─────────────────────────────────────────────────────────
+function getFiltered() {
+  const query = (document.getElementById("searchInput")?.value || "").toLowerCase();
+  return allProducts.filter(p => {
     const matchCat    = activeCategory === "All" || p.category === activeCategory;
     const matchSearch = !query ||
       (p.name || "").toLowerCase().includes(query) ||
       (p.description || "").toLowerCase().includes(query);
     return matchCat && matchSearch;
   });
+}
+
+// ── Render Products ───────────────────────────────────────────────────────────
+function renderProducts() {
+  const filtered = getFiltered();
+  const grid     = document.getElementById("productsGrid");
 
   if (filtered.length === 0) {
     grid.innerHTML = `<p style="text-align:center;color:var(--muted);padding:60px 20px;grid-column:1/-1;font-style:italic;">No gifts match your search.</p>`;
@@ -104,15 +110,13 @@ function renderProducts() {
   }
 
   grid.innerHTML = filtered.map((p, i) => {
-    // ── Images: parse comma-separated or use images array ──
+    // ── Images ──
     const images = (p.images && p.images.length > 0)
       ? p.images
       : (p.imageUrl ? p.imageUrl.split(',').map(u => u.trim()).filter(Boolean) : []);
 
-    // Use numeric index as carousel key — safe for DOM ids
     const carKey = `prod-${i}`;
     carouselState[carKey] = 0;
-
     const hasMany = images.length > 1;
 
     const slides = images.map((url, si) => `
@@ -136,8 +140,25 @@ function renderProducts() {
         `).join("")}
       </div>` : "";
 
-    // ── Colors: parse comma-separated color values ──
+    // ── Colors ──
     const colorSwatches = buildColorSwatches(p.colors || p.color || "", i);
+
+    // ── Sizes: array of {label, price} from Code.gs ──
+    const hasSizes = p.sizes && p.sizes.length > 0;
+    if (selectedSizes[i] === undefined) selectedSizes[i] = 0;
+    const startPrice = hasSizes ? p.sizes[0].price : p.price;
+
+    const sizesHtml = hasSizes ? `
+      <div class="size-row">
+        <span class="size-label">SIZE:</span>
+        ${p.sizes.map((s, si) => `
+          <button
+            class="size-btn${si === 0 ? ' size-btn-active' : ''}"
+            id="sizebtn-${i}-${si}"
+            onclick="selectSize(${i}, ${si})"
+          >${escHtml(s.label)}</button>
+        `).join("")}
+      </div>` : "";
 
     return `
       <div class="product-card" style="animation-delay:${i * 0.06}s">
@@ -150,9 +171,10 @@ function renderProducts() {
           ${p.category ? `<div class="product-category-tag">${escHtml(p.category)}</div>` : ""}
           <div class="product-name">${escHtml(p.name)}</div>
           ${p.description ? `<div class="product-desc">${escHtml(p.description)}</div>` : ""}
+          ${sizesHtml}
           ${colorSwatches}
           <div class="product-footer">
-            <span class="product-price">PKR ${Number(p.price).toLocaleString()}</span>
+            <span class="product-price" id="price-${i}">PKR ${Number(startPrice).toLocaleString()}</span>
             <button class="add-btn" onclick="addToCart(${i}, this)">+ Add to Cart</button>
           </div>
         </div>
@@ -160,23 +182,37 @@ function renderProducts() {
   }).join("");
 }
 
+// ── Size Selection ────────────────────────────────────────────────────────────
+function selectSize(cardIdx, sizeIdx) {
+  selectedSizes[cardIdx] = sizeIdx;
+  const filtered = getFiltered();
+  const product  = filtered[cardIdx];
+  if (!product || !product.sizes) return;
+
+  // Update button styles
+  product.sizes.forEach((_, si) => {
+    const btn = document.getElementById(`sizebtn-${cardIdx}-${si}`);
+    if (btn) btn.classList.toggle("size-btn-active", si === sizeIdx);
+  });
+
+  // Update price display
+  const priceEl = document.getElementById(`price-${cardIdx}`);
+  if (priceEl) priceEl.textContent = `PKR ${Number(product.sizes[sizeIdx].price).toLocaleString()}`;
+}
+
 // ── Color Swatches ────────────────────────────────────────────────────────────
 function buildColorSwatches(colorStr, productIndex) {
   if (!colorStr || !String(colorStr).trim()) return "";
-
   const colors = String(colorStr).split(",").map(c => c.trim()).filter(Boolean);
   if (colors.length === 0) return "";
 
-  const swatches = colors.map((c, ci) => {
-    // Support named colors or hex codes
-    const style = `background:${c};`;
-    return `<span
+  const swatches = colors.map((c, ci) => `
+    <span
       class="color-swatch${ci === 0 ? ' selected' : ''}"
-      style="${style}"
+      style="background:${c};"
       title="${escHtml(c)}"
       onclick="selectColor(this, ${productIndex}, '${escHtml(c)}')"
-    ></span>`;
-  }).join("");
+    ></span>`).join("");
 
   return `
     <div class="color-picker">
@@ -186,16 +222,11 @@ function buildColorSwatches(colorStr, productIndex) {
     </div>`;
 }
 
-// Track selected colors per product
-const selectedColors = {};
-
 function selectColor(el, productIndex, color) {
   selectedColors[productIndex] = color;
-  // Update swatch highlight
   const wrap = document.getElementById(`swatches-${productIndex}`);
   if (wrap) wrap.querySelectorAll(".color-swatch").forEach(s => s.classList.remove("selected"));
   el.classList.add("selected");
-  // Update label
   const label = document.getElementById(`color-name-${productIndex}`);
   if (label) label.textContent = color;
 }
@@ -211,10 +242,8 @@ function moveSlide(carKey, delta) {
   let cur = carouselState[carKey] || 0;
   slides[cur].classList.remove("active");
   if (dots[cur]) dots[cur].classList.remove("active");
-
   cur = (cur + delta + slides.length) % slides.length;
   carouselState[carKey] = cur;
-
   slides[cur].classList.add("active");
   if (dots[cur]) dots[cur].classList.add("active");
 }
@@ -229,7 +258,6 @@ function goToSlide(carKey, index) {
   const cur = carouselState[carKey] || 0;
   slides[cur].classList.remove("active");
   if (dots[cur]) dots[cur].classList.remove("active");
-
   carouselState[carKey] = index;
   slides[index].classList.add("active");
   if (dots[index]) dots[index].classList.add("active");
@@ -238,34 +266,39 @@ function goToSlide(carKey, index) {
 // ── Search ────────────────────────────────────────────────────────────────────
 function filterProducts() { renderProducts(); }
 
-// ── Cart ──────────────────────────────────────────────────────────────────────
-function getFilteredProduct(i) {
-  const query = (document.getElementById("searchInput")?.value || "").toLowerCase();
-  return allProducts.filter(p => {
-    const matchCat    = activeCategory === "All" || p.category === activeCategory;
-    const matchSearch = !query ||
-      (p.name || "").toLowerCase().includes(query) ||
-      (p.description || "").toLowerCase().includes(query);
-    return matchCat && matchSearch;
-  })[i];
-}
-
+// ── Add to Cart ───────────────────────────────────────────────────────────────
 function addToCart(gridIndex, btn) {
-  const product = getFilteredProduct(gridIndex);
+  const filtered = getFiltered();
+  const product  = filtered[gridIndex];
   if (!product) return;
 
+  const hasSizes  = product.sizes && product.sizes.length > 0;
+  const sizeIdx   = selectedSizes[gridIndex] ?? 0;
+  const sizeObj   = hasSizes ? product.sizes[sizeIdx] : null;
+  const price     = hasSizes ? sizeObj.price : product.price;
+  const sizeLabel = hasSizes ? sizeObj.label : null;
+
   const chosenColor = selectedColors[gridIndex] || null;
-  const cartKey     = product.name + (chosenColor ? `|${chosenColor}` : "");
-  const existing    = cart.find(c => c._cartKey === cartKey);
+
+  // Unique cart key = name + size + color
+  const cartKey  = `${product.name}|${sizeLabel || ""}|${chosenColor || ""}`;
+  const existing = cart.find(c => c._cartKey === cartKey);
 
   if (existing) {
     existing.qty++;
   } else {
-    cart.push({ ...product, qty: 1, chosenColor, _cartKey: cartKey });
+    cart.push({
+      ...product,
+      price,
+      sizeLabel,
+      chosenColor,
+      qty: 1,
+      _cartKey: cartKey,
+    });
   }
 
   updateCartBadge();
-  showToast(`🎁 "${product.name}" added to cart`);
+  showToast(`🎁 "${product.name}"${sizeLabel ? ` (${sizeLabel})` : ""} added to cart`);
 
   if (btn) {
     const orig = btn.textContent;
@@ -275,6 +308,7 @@ function addToCart(gridIndex, btn) {
   }
 }
 
+// ── Cart Badge ────────────────────────────────────────────────────────────────
 function updateCartBadge() {
   const count = cart.reduce((a, b) => a + b.qty, 0);
   const badge = document.getElementById("cartBadge");
@@ -283,6 +317,7 @@ function updateCartBadge() {
   badge.classList.toggle("show", count > 0);
 }
 
+// ── Render Cart ───────────────────────────────────────────────────────────────
 function renderCart() {
   const list = document.getElementById("cartItemsList");
   if (!list) return;
@@ -308,7 +343,14 @@ function renderCart() {
       </div>
       <div class="cart-item-info">
         <div class="cart-item-name">${escHtml(item.name)}</div>
-        ${item.chosenColor ? `<div class="cart-item-color"><span class="cart-color-dot" style="background:${escHtml(item.chosenColor)}"></span>${escHtml(item.chosenColor)}</div>` : ""}
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:3px;">
+          ${item.sizeLabel
+            ? `<span style="font-size:0.75rem;background:var(--blush);color:var(--royal);padding:2px 9px;border-radius:10px;font-weight:500;">${escHtml(item.sizeLabel)}</span>`
+            : ""}
+          ${item.chosenColor
+            ? `<div class="cart-item-color"><span class="cart-color-dot" style="background:${escHtml(item.chosenColor)}"></span>${escHtml(item.chosenColor)}</div>`
+            : ""}
+        </div>
         <div class="cart-item-price">PKR ${Number(item.price).toLocaleString()} each</div>
         <div class="qty-ctrl">
           <button class="qty-btn" onclick="changeQty(${i}, -1)">−</button>
@@ -339,6 +381,7 @@ function removeFromCart(index) {
   updateCartBadge();
 }
 
+// ── Order Summary ─────────────────────────────────────────────────────────────
 function updateSummary() {
   const subtotal = cart.reduce((a, b) => a + Number(b.price) * b.qty, 0);
   const wrapFee  = giftWrap ? CONFIG.GIFT_WRAP : 0;
@@ -357,7 +400,11 @@ function updateSummary() {
     coList.innerHTML = cart.map(item => `
       <div class="checkout-item-row">
         <div>
-          <div class="checkout-item-name">${escHtml(item.name)}${item.chosenColor ? ` <span style="font-size:0.75rem;color:var(--muted)">(${escHtml(item.chosenColor)})</span>` : ""}</div>
+          <div class="checkout-item-name">
+            ${escHtml(item.name)}
+            ${item.sizeLabel ? `<span style="font-size:0.72rem;color:var(--muted);margin-left:4px;">(${escHtml(item.sizeLabel)})</span>` : ""}
+            ${item.chosenColor ? `<span style="font-size:0.72rem;color:var(--muted);margin-left:2px;">${escHtml(item.chosenColor)}</span>` : ""}
+          </div>
           <div class="checkout-item-qty">×${item.qty}</div>
         </div>
         <div class="checkout-item-price">PKR ${(Number(item.price) * item.qty).toLocaleString()}</div>
@@ -406,7 +453,9 @@ async function placeOrder() {
     senderName, phone, email: val("email"),
     recipientName, address, deliveryDate,
     occasion: val("occasion"), giftMessage: val("giftMessage"),
-    items: cart.map(c => `${c.name}${c.chosenColor ? ` (${c.chosenColor})` : ""} x${c.qty}`).join(", "),
+    items: cart.map(c =>
+      `${c.name}${c.sizeLabel ? ` [${c.sizeLabel}]` : ""}${c.chosenColor ? ` (${c.chosenColor})` : ""} x${c.qty} @ PKR ${c.price}`
+    ).join(", "),
     subtotal, giftWrap: wrapFee, deliveryFee: CONFIG.DELIVERY_FEE,
     total, paymentMethod: selectedPayment,
   };
