@@ -29,7 +29,7 @@
     <a class="brand" href="#" style="font-size:1.45rem;"><span>Don</span> Trove</a>
   </div>
   <!-- Right: nav -->
-  <nav style="justify-content:flex-end;">
+  <nav style="display:flex;align-items:center;justify-content:flex-end;">
     <button class="nav-btn" onclick="showView('about')">About ✦</button>
     <button class="nav-btn cart-btn" onclick="showView('cart')">
       🛍️ Cart
@@ -290,12 +290,12 @@
 
 <script>
 (function() {
-  const canvas = document.getElementById('Canvas');
+  const canvas = document.getElementById('logoCanvas');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
   const img = new Image();
   img.crossOrigin = 'anonymous';
-  img.src = 'logo(4) (1).png';
+  img.src = 'logo (4) (1).png';
   img.onload = function() {
     const scale = 44 / img.naturalHeight;
     const w = Math.round(img.naturalWidth * scale);
