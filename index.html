@@ -24,10 +24,8 @@
     </div>
     <a class="brand" href="#" style="font-size:1.1rem;letter-spacing:0.12em;"><span>Le Tresor De </span><i>Misfah</i></a>
   </div>
-  <!-- Center: logo only -->
-  <div style="display:flex;align-items:center;justify-content:center;">
-    <canvas id="logoCanvas" height="44" style="display:block;"></canvas>
-  </div>
+  <!-- Center: empty -->
+  <div></div>
   <!-- Right: nav -->
   <nav style="display:flex;align-items:center;justify-content:flex-end;">
     <button class="nav-btn" onclick="showView('about')">About ✦</button>
@@ -43,7 +41,7 @@
   <div class="hero-orb hero-orb-1"></div>
   <div class="hero-orb hero-orb-2"></div>
   <div class="hero-content">
-    <canvas id="heroLogoCanvas" height="72" style="display:block;margin:0 auto 20px;"></canvas>
+    <canvas id="heroLogoCanvas" height="160" style="display:block;margin:0 auto 24px;"></canvas>
     <h1>DON <em>TROVE</em></h1>
   </div>
 </div>
@@ -326,18 +324,6 @@ function removeBg(canvas, ctx, img, height) {
   ctx.putImageData(imageData, 0, 0);
 }
 
-/* ── Header logo (small) ── */
-(function() {
-  const canvas = document.getElementById('logoCanvas');
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  const img = new Image();
-  img.crossOrigin = 'anonymous';
-  img.src = 'logo (4) (2).png';
-  img.onload  = () => removeBg(canvas, ctx, img, 44);
-  img.onerror = () => canvas.style.display = 'none';
-})();
-
 /* ── Hero logo (large) ── */
 (function() {
   const canvas = document.getElementById('heroLogoCanvas');
@@ -346,7 +332,7 @@ function removeBg(canvas, ctx, img, height) {
   const img = new Image();
   img.crossOrigin = 'anonymous';
   img.src = 'logo (4) (1).png';
-  img.onload  = () => removeBg(canvas, ctx, img, 72);
+  img.onload  = () => removeBg(canvas, ctx, img, 160);
   img.onerror = () => canvas.style.display = 'none';
 })();
 </script>
