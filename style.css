@@ -16,6 +16,7 @@
   --silver:       #A8A8C0;   /* steel silver */
   --silver-light: #E8E8F0;   /* pearl */
   --pearl:        #F8F6FF;   /* near-white */
+  --lightpink     #E8748A;
   --shadow:       0 4px 32px rgba(224, 104, 120, 0.10);
   --shadow-lg:    0 12px 60px rgba(46, 32, 48, 0.18);
 }
@@ -56,7 +57,7 @@ header {
   text-transform: uppercase;
   text-decoration: none;
 }
-.brand span { color: #F8B8C0; font-style: italic; font-weight: 400; }
+.brand span { color: #E8748A; font-style: italic; font-weight: 400; }
 
 nav { display: flex; align-items: center; gap: 8px; }
 
@@ -80,7 +81,7 @@ nav { display: flex; align-items: center; gap: 8px; }
 }
 .nav-btn.cart-btn {
   background: linear-gradient(135deg, #E06878, #C85060);
-  color: #fff;
+  color: #E8748A;
   font-weight: 600;
   position: relative;
   padding-right: 22px;
@@ -108,7 +109,7 @@ nav { display: flex; align-items: center; gap: 8px; }
 
 /* ══ HERO ══ */
 .hero {
-  background: linear-gradient(135deg, #2E2030 0%, #4A2838 25%, #5A3040 50%, #6A3848 75%, #7A4858 100%);
+  background: linear-gradient(135deg, #E8748A 0%, #4A2838 25%, #5A3040 50%, #6A3848 75%, #E8748A 100%);
   position: relative;
   overflow: hidden;
   padding: 140px 24px 90px;
