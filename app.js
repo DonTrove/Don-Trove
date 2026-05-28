@@ -113,6 +113,20 @@ function buildCategoryTabs() {
   const tabsRow = document.getElementById("catTabs");
   tabsRow.innerHTML = "";
 
+  // ── Back to Shop button ──
+  const backBtn = document.createElement("button");
+  backBtn.className = "tab";
+  backBtn.innerHTML = "← Shop";
+  backBtn.style.cssText = "color:var(--royal);font-weight:600;border-bottom:1.5px solid var(--lavender);";
+  backBtn.onclick = () => {
+    activeCategory = "All";
+    document.querySelectorAll(".tab").forEach(b => b.classList.remove("active"));
+    document.getElementById("catDropdown")?.classList.remove("open");
+    showView("shop");
+    renderProducts();
+  };
+  tabsRow.appendChild(backBtn);
+
   cats.forEach(cat => {
     const btn = document.createElement("button");
     btn.className = "tab" + (cat === activeCategory ? " active" : "");
@@ -257,7 +271,6 @@ function addToCart(gridIndex, btn) {
   const product  = filtered[gridIndex];
   if (!product) return;
 
-  // Use first size/price as default; user will refine in cart
   const hasSizes  = product.sizes && product.sizes.length > 0;
   const price     = hasSizes ? product.sizes[0].price : product.price;
   const sizeLabel = hasSizes ? product.sizes[0].label : null;
@@ -312,7 +325,6 @@ function renderCart() {
 
   list.innerHTML = cart.map((item, i) => {
 
-    // ── Size picker ──
     const hasSizes = item.sizes && item.sizes.length > 0;
     const sizesHtml = hasSizes ? `
       <div class="size-row" style="margin:10px 0 4px;">
@@ -326,7 +338,6 @@ function renderCart() {
         }).join("")}
       </div>` : "";
 
-    // ── Colour picker ──
     const colorStr = item.colors || item.color || "";
     const colours  = colorStr
       ? String(colorStr).split(",").map(c => c.trim()).filter(Boolean).map(resolveColour)
@@ -351,13 +362,11 @@ function renderCart() {
         </div>
       </div>` : "";
 
-    // ── Colour dot for chosen colour display ──
     const isMultiColor  = item.chosenColor === "Multi";
     const colorDotStyle = isMultiColor
       ? `background:conic-gradient(#F4A0A0 0deg 60deg,#F9C6D4 60deg 120deg,#B3D9F2 120deg 180deg,#B5E8D5 180deg 240deg,#D4B8F0 240deg 300deg,#FBE8A0 300deg 360deg);`
       : `background:${escHtml(COLOUR_MAP[item.chosenColor?.toLowerCase()] || item.chosenColor || "#ccc")};`;
 
-    // ── Hint if nothing selected yet ──
     const needsAttention = (item.sizes && item.sizes.length > 1 && !item.sizeLabel) ||
                            (colours.length > 0 && !item.chosenColor);
 
@@ -371,12 +380,9 @@ function renderCart() {
       <div class="cart-item-info" style="flex:1;min-width:160px;">
         <div class="cart-item-name">${escHtml(item.name)}</div>
         <div class="cart-item-price">PKR ${Number(item.price).toLocaleString()} each</div>
-
         ${sizesHtml}
         ${colorHtml}
-
         ${needsAttention ? `<div style="font-size:0.75rem;color:var(--royal);margin-bottom:6px;">✦ Please select your options above</div>` : ""}
-
         <div class="qty-ctrl">
           <button class="qty-btn" onclick="changeQty(${i}, -1)">−</button>
           <span class="qty-num">${item.qty}</span>
