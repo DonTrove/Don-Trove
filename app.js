@@ -113,20 +113,6 @@ function buildCategoryTabs() {
   const tabsRow = document.getElementById("catTabs");
   tabsRow.innerHTML = "";
 
-  // ── Back to Shop button ──
-  const backBtn = document.createElement("button");
-  backBtn.className = "tab";
-  backBtn.innerHTML = "← Shop";
-  backBtn.style.cssText = "color:var(--royal);font-weight:600;border-bottom:1.5px solid var(--lavender);";
-  backBtn.onclick = () => {
-    activeCategory = "All";
-    document.querySelectorAll(".tab").forEach(b => b.classList.remove("active"));
-    document.getElementById("catDropdown")?.classList.remove("open");
-    showView("shop");
-    renderProducts();
-  };
-  tabsRow.appendChild(backBtn);
-
   cats.forEach(cat => {
     const btn = document.createElement("button");
     btn.className = "tab" + (cat === activeCategory ? " active" : "");
@@ -165,7 +151,12 @@ function renderProducts() {
     return;
   }
 
-  grid.innerHTML = filtered.map((p, i) => {
+  const backBar = activeCategory !== "All" ? `
+    <div style="grid-column:1/-1;margin-bottom:8px;">
+      <button class="back-btn" onclick="activeCategory='All';document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));document.querySelector('.tab')?.classList.add('active');renderProducts();">← Back to All</button>
+    </div>` : "";
+
+  grid.innerHTML = backBar + filtered.map((p, i) => {
     // ── Images ──
     const images = (p.images && p.images.length > 0)
       ? p.images
@@ -175,12 +166,14 @@ function renderProducts() {
     carouselState[carKey] = 0;
     const hasMany = images.length > 1;
 
+    // FIX 1: added decoding="async" to carousel slides
     const slides = images.map((url, si) => `
       <img
         src="${escHtml(url)}"
         alt="${escHtml(p.name)} ${si + 1}"
         class="carousel-slide${si === 0 ? ' active' : ''}"
         loading="lazy"
+        decoding="async"
         onerror="this.style.display='none'"
       />`).join("");
 
@@ -196,7 +189,6 @@ function renderProducts() {
         `).join("")}
       </div>` : "";
 
-    // ── Starting price (first size or base price) ──
     const startPrice = (p.sizes && p.sizes.length > 0) ? p.sizes[0].price : p.price;
 
     return `
@@ -362,11 +354,6 @@ function renderCart() {
         </div>
       </div>` : "";
 
-    const isMultiColor  = item.chosenColor === "Multi";
-    const colorDotStyle = isMultiColor
-      ? `background:conic-gradient(#F4A0A0 0deg 60deg,#F9C6D4 60deg 120deg,#B3D9F2 120deg 180deg,#B5E8D5 180deg 240deg,#D4B8F0 240deg 300deg,#FBE8A0 300deg 360deg);`
-      : `background:${escHtml(COLOUR_MAP[item.chosenColor?.toLowerCase()] || item.chosenColor || "#ccc")};`;
-
     const needsAttention = (item.sizes && item.sizes.length > 1 && !item.sizeLabel) ||
                            (colours.length > 0 && !item.chosenColor);
 
@@ -374,7 +361,8 @@ function renderCart() {
     <div class="cart-item" style="flex-wrap:wrap;align-items:flex-start;${needsAttention ? 'border-color:rgba(224,104,120,0.35);' : ''}">
       <div class="cart-item-img" style="flex-shrink:0;">
         ${item.imageUrl
-          ? `<img src="${escHtml(item.imageUrl)}" alt="${escHtml(item.name)}" onerror="this.style.display='none'">`
+          // FIX 2: added loading="lazy" decoding="async" to cart image
+          ? `<img src="${escHtml(item.imageUrl)}" alt="${escHtml(item.name)}" loading="lazy" decoding="async" onerror="this.style.display='none'">`
           : "🎁"}
       </div>
       <div class="cart-item-info" style="flex:1;min-width:160px;">
