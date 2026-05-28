@@ -13,18 +13,19 @@
 <body>
 
 <!-- ══ HEADER ══ -->
-<header style="display:flex;align-items:center;justify-content:space-between;">
-  <div style="display:flex;align-items:center;gap:10px;position:relative;">
+<header>
+  <div style="display:flex;align-items:center;gap:8px;position:relative;">
     <div style="position:relative;">
       <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleCatMenu()" aria-label="Filter by category">☰</button>
       <div class="cat-dropdown" id="catDropdown">
         <div id="catTabs"></div>
       </div>
     </div>
-    <a class="brand" href="#" style="font-size:1.1rem;letter-spacing:0.12em;"><span>Le Tresor De </span><i>Misfah</i></a>
+    <a class="brand" href="#"><span>Le Tresor De </span><i>Misfah</i></a>
   </div>
-  <nav style="display:flex;align-items:center;">
-    <button class="nav-btn" onclick="showView('about')">About ✦</button>
+  <nav>
+    <!-- FIX: added about-btn class so tiny-screen rule can target it -->
+    <button class="nav-btn about-btn" onclick="showView('about')">About ✦</button>
     <button class="nav-btn cart-btn" onclick="showView('cart')">
       🛍️ Cart
       <span class="cart-badge" id="cartBadge">0</span>
@@ -33,6 +34,7 @@
 </header>
 
 <!-- ══ HERO ══ -->
+<!-- FIX: removed inline margin-top; CSS now controls it per breakpoint -->
 <div class="hero">
   <div class="hero-orb hero-orb-1"></div>
   <div class="hero-orb hero-orb-2"></div>
