@@ -1,27 +1,26 @@
 /* ══ VARIABLES — ROSE PINK / SILVER / PEARL / IRIDESCENT KEY THEME ══ */
 :root {
-  --plum:         #2E2030;   /* deep key shadow / primary text */
-  --royal:        #E06878;   /* deep rose — primary CTA, prices, active states */
-  --violet:       #F08090;   /* rose pink — mid accent */
-  --lavender:     #F8B8C0;   /* blush — borders, light fills */
-  --blush:        #FDE8EC;   /* petal — input & card backgrounds */
-  --gold:         #C8C8D8;   /* silver — decorative */
-  --gold-light:   #E8E8F0;   /* pearl light */
-  --cream:        #FFF5F7;   /* warm off-white site background */
-  --text:         #2E2030;   /* deep plum text */
-  --muted:        #9898B8;   /* pewter — secondary / muted text */
+  --plum:         #2E2030;
+  --royal:        #E06878;
+  --violet:       #F08090;
+  --lavender:     #F8B8C0;
+  --blush:        #FDE8EC;
+  --gold:         #C8C8D8;
+  --gold-light:   #E8E8F0;
+  --cream:        #FFF5F7;
+  --text:         #2E2030;
+  --muted:        #9898B8;
   --white:        #FFFFFF;
   --beige:        #FDE8EC;
   --beige-soft:   #F8B8C0;
-  --silver:       #A8A8C0;   /* steel silver */
-  --silver-light: #E8E8F0;   /* pearl */
-  --pearl:        #F8F6FF;   /* near-white */
+  --silver:       #A8A8C0;
+  --silver-light: #E8E8F0;
+  --pearl:        #F8F6FF;
   --lightpink:    #E8748A;
   --shadow:       0 4px 32px rgba(224, 104, 120, 0.10);
   --shadow-lg:    0 12px 60px rgba(46, 32, 48, 0.18);
 }
 
-/* ── RESET ── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
 body {
@@ -37,7 +36,7 @@ header {
   position: fixed;
   top: 0; left: 0; right: 0;
   z-index: 100;
- background: linear-gradient(135deg, rgba(160, 55, 75, 0.97) 0%, rgba(185, 65, 85, 0.97) 50%, rgba(200, 75, 95, 0.97) 100%);
+  background: linear-gradient(135deg, rgba(160, 55, 75, 0.97) 0%, rgba(185, 65, 85, 0.97) 50%, rgba(200, 75, 95, 0.97) 100%);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
   border-bottom: 1px solid rgba(248, 184, 192, 0.15);
@@ -109,7 +108,7 @@ nav { display: flex; align-items: center; gap: 8px; }
 
 /* ══ HERO ══ */
 .hero {
-  background: 
+  background:
     linear-gradient(135deg, rgba(232, 116, 138, 0.35) 0%, rgba(232, 116, 138, 0.35) 100%),
     url('BG.png') center center / cover no-repeat;
   position: relative;
@@ -1074,4 +1073,29 @@ button.size-btn.size-btn-active {
   color: var(--plum) !important;
   font-weight: 700 !important;
   border-bottom-color: var(--royal) !important;
+}
+
+/* ══ BACK BUTTON ══ */
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: 1.5px solid var(--lavender);
+  color: var(--muted);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 8px 18px;
+  border-radius: 40px;
+  cursor: pointer;
+  margin-bottom: 24px;
+  transition: all 0.2s;
+}
+.back-btn:hover {
+  border-color: var(--royal);
+  color: var(--royal);
+  background: var(--blush);
 }
