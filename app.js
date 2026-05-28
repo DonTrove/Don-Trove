@@ -122,6 +122,7 @@ function buildCategoryTabs() {
       document.querySelectorAll(".tab").forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
       document.getElementById("catDropdown")?.classList.remove("open");
+      showView("shop");
       renderProducts();
     };
     tabsRow.appendChild(btn);
