@@ -1003,12 +1003,12 @@ nav { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
   /* FIX: Hero mobile — use contain so image is never compressed */
   .hero {
     margin-top: 60px;
-    height: auto;
-    min-height: 200px;
-    background-size: contain;
+    
+    height: 280px;
+    background-size: cover;
     background-position: center center;
-    background-repeat: no-repeat;
-    background-color: #F9C0C8;
+    
+    
   }
 
   .tabs-wrap {
