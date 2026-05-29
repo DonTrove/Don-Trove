@@ -91,10 +91,10 @@
 <div class="view" id="view-checkout">
   <button onclick="showView('cart')" class="back-btn">← Back to Cart</button>
   <p class="section-title">Order Details</p>
-  <p class="section-sub">Tell us where to send your thoughtful gift</p>
+  <p class="section-sub">Just a few details and your order is on its way</p>
   <div class="checkout-grid">
     <div>
-      <!-- Sender -->
+      <!-- Orderer Info -->
       <div class="form-section">
         <div class="form-section-title"><div class="icon">👤</div> Your Information</div>
         <div class="form-row">
@@ -113,39 +113,10 @@
             <input type="email" id="email" placeholder="your@email.com"/>
           </div>
         </div>
-      </div>
-      <!-- Recipient -->
-      <div class="form-section">
-        <div class="form-section-title"><div class="icon">🎁</div> Recipient Details</div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Recipient Name *</label>
-            <input type="text" id="recipientName" placeholder="Who is this for?"/>
-          </div>
-          <div class="form-group">
-            <label>Occasion</label>
-            <select id="occasion">
-              <option value="">Select occasion</option>
-              <option>Birthday</option>
-              <option>Anniversary</option>
-              <option>Wedding</option>
-              <option>Baby Shower</option>
-              <option>Graduation</option>
-              <option>Eid</option>
-              <option>Other</option>
-            </select>
-          </div>
-        </div>
         <div class="form-row full">
           <div class="form-group">
             <label>Delivery Address *</label>
             <textarea id="address" placeholder="Full delivery address including city"></textarea>
-          </div>
-        </div>
-        <div class="form-row full">
-          <div class="form-group">
-            <label>Gift Message</label>
-            <input type="text" id="giftMessage" placeholder="A special note…"/>
           </div>
         </div>
       </div>
