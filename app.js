@@ -504,9 +504,9 @@ async function placeOrder() {
   const val = id => (document.getElementById(id)?.value || "").trim();
   const senderName = val("senderName"), phone = val("phone"),
         recipientName = val("recipientName"), address = val("address"),
-        deliveryDate = val("deliveryDate");
+        
 
-  if (!senderName || !phone || !recipientName || !address || !deliveryDate) {
+  if (!senderName || !phone || !recipientName || !address) {
     showToast("⚠️ Please fill in all required fields", true); return;
   }
 
@@ -521,7 +521,7 @@ async function placeOrder() {
   const payload = {
     orderRef, dateTime: new Date().toLocaleString(),
     senderName, phone, email: val("email"),
-    recipientName, address, deliveryDate,
+    recipientName, address, 
     occasion: val("occasion"), giftMessage: val("giftMessage"),
     items: cart.map(c =>
       `${c.name}${c.sizeLabel ? ` [${c.sizeLabel}]` : ""}${c.chosenColor ? ` (${c.chosenColor})` : ""} x${c.qty} @ PKR ${c.price}`
@@ -562,7 +562,7 @@ function resetAll() {
   document.getElementById("giftWrapCheck").checked = false;
   selectedPayment = "Cash on Delivery";
   document.querySelectorAll(".payment-opt").forEach((o, i) => o.classList.toggle("selected", i === 0));
-  ["senderName","phone","email","recipientName","address","deliveryDate","occasion","giftMessage"]
+  ["senderName","phone","email","recipientName","address","occasion","giftMessage"]
     .forEach(id => { const el = document.getElementById(id); if (el) el.value = ""; });
   updateCartBadge(); renderCart(); showView("shop");
 }
