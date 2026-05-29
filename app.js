@@ -344,7 +344,7 @@ function renderCart() {
       <div class="cart-empty">
         <span class="empty-icon">🛍️</span>
         <p>Your cart is empty.</p>
-        <button class="checkout-btn" style="width:auto;padding:10px 28px;margin-top:16px;" onclick="showView('shop')">Browse Gifts</button>
+        <button class="checkout-btn" style="width:auto;padding:10px 28px;margin-top:16px;" onclick="goHome()">Browse Gifts</button>
       </div>`;
     document.getElementById("proceedBtn").disabled = true;
     updateSummary();
@@ -547,12 +547,22 @@ async function placeOrder() {
 }
 
 // ── View Switching ────────────────────────────────────────────────────────────
+function goHome() {
+  activeCategory = "All";
+  document.querySelectorAll(".tab").forEach(b => b.classList.remove("active"));
+  document.querySelector(".tab")?.classList.add("active");
+  showView("shop");
+  renderProducts();
+}
+
 function showView(name) {
   document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
   document.getElementById(`view-${name}`)?.classList.add("active");
   document.querySelectorAll(".nav-btn:not(.cart-btn)").forEach(b => {
     b.classList.toggle("active", b.textContent.trim().toLowerCase().startsWith(name));
   });
+  const searchBar = document.getElementById("searchBar");
+  if (searchBar) searchBar.style.display = name === "shop" ? "" : "none";
   if (name === "cart") renderCart();
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
@@ -583,4 +593,4 @@ function escHtml(str) {
   return String(str ?? "")
     .replace(/&/g, "&amp;").replace(/</g, "&lt;")
     .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-}
+}S
