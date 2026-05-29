@@ -5,7 +5,7 @@
  */
 
 const CONFIG = {
-  SHEET_URL:    "https://script.google.com/macros/s/AKfycby3jaLaeRHCh0vG96Um_B81zbV9JNiKkIr4PF-swi5pL_s-qD-o4kiwXQnLjU-flwt6bQ/exec",
+  SHEET_URL:    "https://script.google.com/macros/s/AKfycbzHBSbROYklWjK302SwD56T0X89nq2POyY6ZNg6aAbZlS5DoG4Nc6-ruf0I3yCOGrbSfQ/exec",
   DELIVERY_FEE: 200,
   GIFT_WRAP:    300,
 };
