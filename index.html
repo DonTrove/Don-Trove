@@ -26,7 +26,6 @@
     <a class="brand" href="#"><span>Le Tresor De </span><i>Misfah</i></a>
   </div>
   <nav>
-    <!-- FIX: added about-btn class so tiny-screen rule can target it -->
     <button class="nav-btn about-btn" onclick="showView('about')">About ✦</button>
     <button class="nav-btn cart-btn" onclick="showView('cart')">
       🛍️ Cart
@@ -36,7 +35,6 @@
 </header>
 
 <!-- ══ HERO ══ -->
-<!-- FIX: removed inline margin-top; CSS now controls it per breakpoint -->
 <div class="hero">
   <div class="hero-orb hero-orb-1"></div>
   <div class="hero-orb hero-orb-2"></div>
@@ -144,11 +142,7 @@
             <textarea id="address" placeholder="Full delivery address including city"></textarea>
           </div>
         </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Preferred Delivery Date</label>
-            <input type="date" id="deliveryDate"/>
-          </div>
+        <div class="form-row full">
           <div class="form-group">
             <label>Gift Message</label>
             <input type="text" id="giftMessage" placeholder="A special note…"/>
