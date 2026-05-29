@@ -16,9 +16,8 @@
  *     Single size / no size options → leave blank or write "none"
  *
  * SHEET STRUCTURE — Orders:
- *   Order Ref | Date/Time | Sender Name | Phone | Email |
- *   Recipient Name | Delivery Address | Delivery Date | Occasion |
- *   Gift Message | Items | Subtotal (PKR) | Gift Wrap |
+ *   Order Ref | Date/Time | Name | Phone | Email |
+ *   Delivery Address | Items | Subtotal (PKR) | Gift Wrap |
  *   Delivery Fee (PKR) | Total (PKR) | Payment Method
  */
 
@@ -128,10 +127,9 @@ function doPost(e) {
     if (!sheet) {
       sheet = ss.insertSheet(ORDERS_SHEET);
       sheet.appendRow([
-        'Order Ref','Date/Time','Sender Name','Phone','Email',
-        'Recipient Name','Delivery Address','Delivery Date','Occasion',
-        'Gift Message','Items','Subtotal (PKR)','Gift Wrap',
-        'Delivery Fee (PKR)','Total (PKR)','Payment Method',
+        'Order Ref', 'Date/Time', 'Name', 'Phone', 'Email',
+        'Delivery Address', 'Items', 'Subtotal (PKR)', 'Gift Wrap',
+        'Delivery Fee (PKR)', 'Total (PKR)', 'Payment Method',
       ]);
       sheet.setFrozenRows(1);
     }
@@ -142,11 +140,7 @@ function doPost(e) {
       payload.senderName    || '',
       payload.phone         || '',
       payload.email         || '',
-      payload.recipientName || '',
       payload.address       || '',
-      payload.deliveryDate  || '',
-      payload.occasion      || '',
-      payload.giftMessage   || '',
       payload.items         || '',   // includes [size] and (color) per item
       payload.subtotal      || 0,
       payload.giftWrap      || 0,
