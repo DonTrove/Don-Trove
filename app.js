@@ -86,7 +86,10 @@ async function loadProducts() {
   grid.innerHTML = `<div class="loading-wrap"><div class="spinner"></div><p>Loading beautiful gifts…</p></div>`;
 
   try {
-    const res  = await fetch(`${CONFIG.SHEET_URL}?t=${Date.now()}`);
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 12000);
+    const res  = await fetch(`${CONFIG.SHEET_URL}?t=${Date.now()}`, { signal: controller.signal });
+    clearTimeout(timeout);
     const data = await res.json();
     allProducts = Array.isArray(data) ? data : (data.products || []);
 
@@ -99,9 +102,10 @@ async function loadProducts() {
     renderProducts();
   } catch (err) {
     console.error(err);
+    const msg = err.name === "AbortError" ? "Request timed out." : err.message;
     grid.innerHTML = `
       <div class="loading-wrap" style="grid-column:1/-1">
-        <p style="color:#c0392b;margin-bottom:16px;">⚠️ Could not load products.<br/><small>${err.message}</small></p>
+        <p style="color:#c0392b;margin-bottom:16px;">⚠️ Could not load products.<br/><small>${msg}</small></p>
         <button class="checkout-btn" style="width:auto;padding:10px 28px;" onclick="loadProducts()">Try Again</button>
       </div>`;
   }
@@ -552,7 +556,7 @@ function goHome() {
   document.querySelectorAll(".tab").forEach(b => b.classList.remove("active"));
   document.querySelector(".tab")?.classList.add("active");
   showView("shop");
-  renderProducts();
+  if (allProducts.length > 0) renderProducts();
 }
 
 function showView(name) {
@@ -569,12 +573,13 @@ function showView(name) {
 
 function resetAll() {
   cart = []; giftWrap = false;
-  document.getElementById("giftWrapCheck").checked = false;
+  const gwc = document.getElementById("giftWrapCheck");
+  if (gwc) gwc.checked = false;
   selectedPayment = "Cash on Delivery";
   document.querySelectorAll(".payment-opt").forEach((o, i) => o.classList.toggle("selected", i === 0));
   ["senderName","phone","email","recipientName","address","occasion","giftMessage"]
     .forEach(id => { const el = document.getElementById(id); if (el) el.value = ""; });
-  updateCartBadge(); renderCart(); showView("shop");
+  updateCartBadge(); renderCart(); goHome();
 }
 
 // ── Toast ─────────────────────────────────────────────────────────────────────
@@ -593,4 +598,4 @@ function escHtml(str) {
   return String(str ?? "")
     .replace(/&/g, "&amp;").replace(/</g, "&lt;")
     .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-}S
+}
