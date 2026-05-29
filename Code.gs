@@ -2,10 +2,10 @@
  * Don Trove — Google Apps Script Backend
  * =========================================
  * SHEET STRUCTURE — Products:
- *   Name | Price | Description | Image URL | Category | Active | Colors | Sizes
+ *   Name | Price | Description | Image 1 | Image 2 | Image 3 | Image 4 | Image 5 | Category | Active | Colors | Sizes
  *
- *   Image URL: comma-separated for carousel
- *     e.g. https://i.ibb.co/img1.jpg,https://i.ibb.co/img2.jpg
+ *   Image 1–5: Each column holds one image URL.
+ *     Leave blank or write NO if a product has fewer than 5 images.
  *
  *   Colors: comma-separated color names or hex codes
  *     e.g. Red,Navy Blue,#F5C2D0
@@ -38,7 +38,11 @@ function doGet(e) {
 
     if (!sheet) {
       sheet = ss.insertSheet(PRODUCTS_SHEET);
-      sheet.appendRow(['Name','Price','Description','Image URL','Category','Active','Colors','Sizes']);
+      sheet.appendRow([
+        'Name','Price','Description',
+        'Image 1','Image 2','Image 3','Image 4','Image 5',
+        'Category','Active','Colors','Sizes'
+      ]);
       sheet.setFrozenRows(1);
       return jsonResponse([]);
     }
@@ -52,7 +56,11 @@ function doGet(e) {
       name:        headers.indexOf('name'),
       price:       headers.indexOf('price'),
       description: headers.indexOf('description'),
-      imageUrl:    headers.indexOf('image url'),
+      image1:      headers.indexOf('image 1'),
+      image2:      headers.indexOf('image 2'),
+      image3:      headers.indexOf('image 3'),
+      image4:      headers.indexOf('image 4'),
+      image5:      headers.indexOf('image 5'),
       category:    headers.indexOf('category'),
       active:      headers.indexOf('active'),
       colors:      headers.indexOf('colors'),
@@ -66,16 +74,19 @@ function doGet(e) {
         return hasName && active === 'YES';
       })
       .map(row => {
-        // ── Images (comma-separated) ──
-        const rawImages = col.imageUrl >= 0 ? String(row[col.imageUrl]).trim() : '';
-        const images    = rawImages.split(',').map(u => u.trim()).filter(Boolean);
+
+        // ── Images (up to 5 separate columns, skip blank or "NO") ──
+        const imageColumns = [col.image1, col.image2, col.image3, col.image4, col.image5];
+        const images = imageColumns
+          .map(c => c >= 0 ? String(row[c]).trim() : '')
+          .filter(url => url !== '' && url.toUpperCase() !== 'NO');
 
         // ── Colors (comma-separated) ──
         const rawColors = col.colors >= 0 ? String(row[col.colors]).trim() : '';
 
         // ── Sizes: "A5:500,A4:800,A3:1200" → [{label:"A5", price:500}, ...]
         // If blank or "none" → empty array (no size UI shown)
-        const rawSizes = col.sizes >= 0 ? String(row[col.sizes]).trim() : '';
+        const rawSizes  = col.sizes >= 0 ? String(row[col.sizes]).trim() : '';
         const basePrice = col.price >= 0 ? Number(row[col.price]) : 0;
         const sizes = (rawSizes && rawSizes.toLowerCase() !== 'none' && rawSizes !== '')
           ? rawSizes.split(',')
@@ -94,10 +105,10 @@ function doGet(e) {
           price:       col.price       >= 0 ? Number(row[col.price])              : 0,
           description: col.description >= 0 ? String(row[col.description]).trim() : '',
           imageUrl:    images[0] || '',
-          images,
+          images,                         // ← array of valid image URLs only
           category:    col.category    >= 0 ? String(row[col.category]).trim()    : '',
           colors:      rawColors,
-          sizes,                        // ← new: array of {label, price}
+          sizes,                          // ← array of {label, price}
         };
       });
 
@@ -136,7 +147,7 @@ function doPost(e) {
       payload.deliveryDate  || '',
       payload.occasion      || '',
       payload.giftMessage   || '',
-      payload.items         || '',   // now includes [size] and (color) per item
+      payload.items         || '',   // includes [size] and (color) per item
       payload.subtotal      || 0,
       payload.giftWrap      || 0,
       payload.deliveryFee   || 0,
