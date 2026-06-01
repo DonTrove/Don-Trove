@@ -38,8 +38,7 @@ header {
 background: linear-gradient(135deg, rgba(180, 170, 155, 0.97) 0%, rgba(200, 190, 170, 0.97) 50%, rgba(165, 158, 145, 0.97) 100%);
 backdrop-filter: blur(18px);
 -webkit-backdrop-filter: blur(18px);
-border-bottom: 1px solid rgba(220, 210, 190, 0.5);
-  height: 68px;
+border-bottom: 1px solid rgba(200, 198, 195, 0.5);
   display: flex;
   align-items: center;
   justify-content: space-between;
