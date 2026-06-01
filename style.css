@@ -35,11 +35,10 @@ body {
 header {
   position: fixed;
   top: 0; left: 0; right: 0;
- background: linear-gradient(135deg, rgba(180, 180, 190, 0.97) 0%, rgba(200, 200, 210, 0.97) 50%, rgba(220, 220, 230, 0.97) 100%);
+background: linear-gradient(135deg, rgba(80, 80, 90, 0.97) 0%, rgba(100, 100, 110, 0.97) 50%, rgba(120, 120, 130, 0.97) 100%);
 backdrop-filter: blur(18px);
 -webkit-backdrop-filter: blur(18px);
-border-bottom: 1px solid rgba(255, 255, 255, 0.4);
-  border-bottom: 1px solid rgba(248, 184, 192, 0.15);
+border-bottom: 1px solid rgba(180, 180, 190, 0.4);
   padding: 0 24px;
   height: 68px;
   display: flex;
@@ -53,7 +52,7 @@ border-bottom: 1px solid rgba(255, 255, 255, 0.4);
   font-size: 1.1rem;
   font-weight: 300;
   letter-spacing: 0.12em;
-  color: #2a2a2a;
+  color: #f0f0f0;
   text-transform: lowercase;
   text-decoration: none;
   white-space: nowrap;
