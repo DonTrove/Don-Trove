@@ -26,7 +26,7 @@
 html { scroll-behavior: smooth; }
 body {
   font-family: 'DM Sans', sans-serif;
-  background: var(--cream);
+  background: #F0EFEE;
   color: var(--text);
   min-height: 100vh;
   overflow-x: hidden;
@@ -183,21 +183,21 @@ nav { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
 .search-bar {
   width: 100%;
   padding: 10px 16px 10px 42px;
-  border: 1.5px solid #F8B8C0;
+  border: 1.5px solid #C8C8C8;
   border-radius: 40px;
   font-family: 'DM Sans', sans-serif;
   font-size: 0.88rem;
   color: var(--text);
-  background: var(--blush);
+  background: #F0EFEE;
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
 }
 .search-bar:focus {
-  border-color: var(--royal);
+  border-color: #8A8A8A;
   background: var(--white);
-  box-shadow: 0 0 0 3px rgba(224, 104, 120, 0.12);
+  box-shadow: 0 0 0 3px rgba(100, 100, 100, 0.12);
 }
-.search-bar::placeholder { color: #F8B8C0; }
+.search-bar::placeholder { color: #ABABAB; }
 
 /* ── HAMBURGER ── */
 .hamburger-btn {
@@ -415,7 +415,7 @@ nav { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
   font-family: 'Cormorant Garamond', serif;
   font-size: 1.35rem;
   font-weight: 600;
-  color: var(--royal);
+  color: #6D6D6D;
 }
 .add-btn {
   background: linear-gradient(135deg, #8A8A8A, #6D6D6D);
