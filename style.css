@@ -97,7 +97,7 @@ nav { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
 .cart-badge {
   position: absolute;
   top: -5px; right: -5px;
-  background: #2E2030;
+  background: #6D6D6D;
   color: #fff;
   border-radius: 50%;
   width: 19px; height: 19px;
