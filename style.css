@@ -177,7 +177,7 @@ nav { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
   left: 14px;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--violet);
+  color: #9B7B8A;
   pointer-events: none;
 }
 .search-bar {
