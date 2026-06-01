@@ -37,10 +37,10 @@ header {
   position: fixed;
   top: 0; left: 0; right: 0;
   z-index: 100;
- background: linear-gradient(135deg, rgba(176, 176, 176, 0.97) 0%, rgba(209, 209, 209, 0.97) 50%, rgba(176, 176, 176, 0.97) 100%);
+  background: linear-gradient(135deg, rgba(90, 88, 85, 0.97) 0%, rgba(110, 108, 105, 0.97) 50%, rgba(90, 88, 85, 0.97) 100%);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
-  border-bottom: 1px solid rgba(232, 232, 232, 0.6);
+  border-bottom: 1px solid rgba(140, 138, 135, 0.5);
   padding: 0 24px;
   height: 68px;
   display: flex;
@@ -53,7 +53,7 @@ header {
   font-size: 1.1rem;
   font-weight: 300;
   letter-spacing: 0.12em;
-  color: #3D3D3D;
+  color: #E8E6E3;
   text-transform: lowercase;
   text-decoration: none;
   white-space: nowrap;
