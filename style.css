@@ -17,7 +17,7 @@
   --silver-light: #E8E8F0;
   --pearl:        #F8F6FF;
   --lightpink:    #E8748A;
-  --Silver        #3D3D3D:;
+  --Silver:       #3D3D3D;
   --shadow:       0 4px 32px rgba(224, 104, 120, 0.10);
   --shadow-lg:    0 12px 60px rgba(46, 32, 48, 0.18);
 }
@@ -37,10 +37,10 @@ header {
   position: fixed;
   top: 0; left: 0; right: 0;
   z-index: 100;
-  background: linear-gradient(135deg, rgba(90, 88, 85, 0.97) 0%, rgba(110, 108, 105, 0.97) 50%, rgba(90, 88, 85, 0.97) 100%);
+  background: linear-gradient(135deg, rgba(100, 98, 95, 0.97) 0%, rgba(120, 118, 115, 0.97) 50%, rgba(100, 98, 95, 0.97) 100%);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
-  border-bottom: 1px solid rgba(140, 138, 135, 0.5);
+  border-bottom: 1px solid rgba(160, 158, 155, 0.5);
   padding: 0 24px;
   height: 68px;
   display: flex;
@@ -82,15 +82,15 @@ nav { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
   color: #fff;
 }
 .nav-btn.cart-btn {
-  background: linear-gradient(135deg, #E06878, #C85060);
+  background: linear-gradient(135deg, #8A8A8A, #6D6D6D);
   color: #FFFFFF;
   font-weight: 600;
   position: relative;
   padding-right: 22px;
-  box-shadow: 0 2px 12px rgba(224, 104, 120, 0.40);
+  box-shadow: 0 2px 12px rgba(100, 100, 100, 0.40);
 }
 .nav-btn.cart-btn:hover {
-  background: linear-gradient(135deg,#E8E8F0 ,#E8E8F0 );
+  background: linear-gradient(135deg, #A0A0A0, #808080);
   color: #fff;
 }
 
@@ -1001,7 +1001,6 @@ nav { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
     gap: 6px;
   }
 
-  /* FIX: Hero mobile — contain preserves full image + borders */
   .hero {
     margin-top: 60px;
     height: 160px;
@@ -1019,7 +1018,6 @@ nav { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
     letter-spacing: 0.05em;
   }
 
-  /* FIX: About button now VISIBLE on mobile — compact icon style */
   .nav-btn:not(.cart-btn) {
     display: flex !important;
     align-items: center;
@@ -1038,7 +1036,6 @@ nav { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
   .search-bar-wrap { max-width: 100%; }
   .carousel-arrow { opacity: 1 !important; }
 
-  /* Tighten product grid on mobile */
   .products-grid {
     grid-template-columns: 1fr;
     gap: 18px;
@@ -1047,12 +1044,10 @@ nav { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
   .product-img-wrap { height: 320px; }
   .product-img-wrap .carousel-slide { object-fit: contain; background: #f9f0f2; }
 
-  /* Cart item stack nicely */
   .cart-item { flex-wrap: wrap; }
 }
 
 @media (max-width: 400px) {
-  /* Very small screens: hide About text, show icon only */
   .nav-btn.about-btn { padding: 7px 8px; font-size: 0; }
   .nav-btn.about-btn::before { content: "✦"; font-size: 0.85rem; }
 }
