@@ -2,7 +2,7 @@
 :root {
   --plum:         #2E2030;
   --royal:        #867575;
-  --violet:       #9B8A8A;
+  --violet:       #9A8888;
   --lavender:     #B59F9F;
   --blush:        #F3EEEE;
   --gold:         #867575;
@@ -82,7 +82,7 @@ nav { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
   color: #fff;
 }
 .nav-btn.cart-btn {
-  background: linear-gradient(135deg, #9B7B8A, #7D5F6E);
+  background: linear-gradient(135deg, #9A8888 0%, #867575 50%, #756565 100%);
   color: #FFFFFF;
   font-weight: 600;
   position: relative;
@@ -90,14 +90,14 @@ nav { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
   box-shadow: 0 2px 12px rgba(125, 95, 110, 0.40);
 }
 .nav-btn.cart-btn:hover {
-  background: linear-gradient(135deg, #B08A9A, #9B7B8A);
+  background: linear-gradient(135deg, #9A8888, #867575);
   color: #fff;
 }
 
 .cart-badge {
   position: absolute;
   top: -5px; right: -5px;
-  background: #7D5F6E;
+  background: #756565;
   color: #fff;
   border-radius: 50%;
   width: 19px; height: 19px;
@@ -143,7 +143,7 @@ nav { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
 }
 .hero-orb-1 {
   width: 520px; height: 520px;
-  background: radial-gradient(circle, #9B8A8A, transparent 70%);
+  background: radial-gradient(circle, #9A8888, transparent 70%);
   top: -160px; left: -120px;
 }
 .hero-orb-2 {
@@ -415,10 +415,10 @@ nav { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
   font-family: 'Cormorant Garamond', serif;
   font-size: 1.35rem;
   font-weight: 600;
-  color: #9B7B8A;
+  color: #867575;
 }
 .add-btn {
-  background: linear-gradient(135deg, #9B7B8A, #7D5F6E);
+  background: linear-gradient(135deg, #9A8888 0%, #867575 50%, #756565 100%);
   color: var(--white);
   border: none;
   cursor: pointer;
@@ -645,7 +645,7 @@ nav { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
   padding: 14px;
   border: none;
   cursor: pointer;
-  background: linear-gradient(135deg, #9B7B8A, #7D5F6E);
+  background: linear-gradient(135deg, #9A8888 0%, #867575 50%, #756565 100%);
   color: var(--white);
   border-radius: 40px;
   font-size: 0.9rem;
@@ -744,7 +744,7 @@ nav { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
   padding: 16px;
   border: none;
   cursor: pointer;
-  background: linear-gradient(135deg, #9B7B8A, #7D5F6E);
+  background: linear-gradient(135deg, #9A8888 0%, #867575 50%, #756565 100%);
   color: var(--white);
   border-radius: 40px;
   font-size: 0.95rem;
@@ -785,7 +785,7 @@ nav { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
 .success-icon {
   width: 100px; height: 100px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #C85060, #9B8A8A);
+  background: linear-gradient(135deg, #C85060, #9A8888);
   margin: 0 auto 28px;
   display: flex;
   align-items: center;
@@ -817,7 +817,7 @@ nav { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
   letter-spacing: 0.08em;
 }
 .back-shop-btn {
-  background: linear-gradient(135deg, #9B7B8A, #7D5F6E);
+  background: linear-gradient(135deg, #9A8888 0%, #867575 50%, #756565 100%);
   color: #fff;
   border: none;
   padding: 12px 36px;
@@ -951,7 +951,7 @@ nav { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
   position: absolute;
   bottom: 0; left: 0; right: 0;
   height: 3px;
-  background: linear-gradient(90deg, #C85060, #9B8A8A, #B0A0D8);
+  background: linear-gradient(90deg, #C85060, #9A8888, #B0A0D8);
 }
 .about-card-pink { background: linear-gradient(135deg, #FFF5F7, #F3EEEE); border-color: var(--lavender); }
 .about-card-icon { font-size: 2.2rem; margin-bottom: 12px; }
@@ -1125,4 +1125,60 @@ button.size-btn.size-btn-active {
   border-color: var(--royal);
   color: var(--royal);
   background: var(--blush);
+}
+
+/* ===== UNIFIED 867575 THEME OVERRIDES ===== */
+.nav-btn.cart-btn,
+.add-btn,
+.checkout-btn,
+.place-order-btn,
+.back-shop-btn{
+  background: linear-gradient(135deg,#9A8888 0%,#867575 50%,#756565 100%) !important;
+  box-shadow: 0 4px 18px rgba(134,117,117,.35) !important;
+}
+
+.nav-btn.cart-btn:hover,
+.add-btn:hover,
+.checkout-btn:hover,
+.place-order-btn:hover,
+.back-shop-btn:hover{
+  background:#867575 !important;
+}
+
+.product-price,
+.checkout-item-price,
+.order-ref-badge,
+.manage-info-banner a,
+.about-card-text em,
+.about-signature{
+  color:#867575 !important;
+}
+
+.order-ref-badge{
+  border-color:#867575 !important;
+}
+
+.success-icon{
+  background:linear-gradient(135deg,#9A8888,#867575) !important;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus{
+  border-color:#867575 !important;
+  box-shadow:0 0 0 3px rgba(134,117,117,.15) !important;
+}
+
+.tab.active,
+.tab:hover{
+  color:#867575 !important;
+}
+
+.qty-btn:hover{
+  background:#867575 !important;
+  border-color:#867575 !important;
+}
+
+.search-bar:focus{
+  border-color:#867575 !important;
 }
