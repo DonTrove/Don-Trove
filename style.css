@@ -34,19 +34,29 @@ body {
 
 /* ══ HEADER ══ */
 header {
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  z-index: 100;
-  background: linear-gradient(135deg, rgba(125, 95, 110, 0.97) 0%, rgba(145, 112, 128, 0.97) 50%, rgba(125, 95, 110, 0.97) 100%);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  border-bottom: 1px solid rgba(180, 150, 165, 0.5);
-  padding: 0 24px;
-  height: 68px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
+    position: fixed;
+    inset: 0 0 auto 0;
+
+    height: 64px;
+    padding: 0 16px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    z-index: 100;
+
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+
+    background: linear-gradient(
+        135deg,
+        rgba(125,95,110,.97),
+        rgba(145,112,128,.97),
+        rgba(125,95,110,.97)
+    );
+
+    border-bottom: 1px solid rgba(180,150,165,.5);
 }
 .brand {
   font-family: 'Cormorant Garamond', serif;
