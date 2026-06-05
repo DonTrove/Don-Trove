@@ -1099,16 +1099,15 @@ button.size-btn.size-btn-active {
     font-size: 0.72rem;
   }
 
-  /* Hero: full image visible, no cropping */
+  /* Hero: tight fit to the banner image */
   .hero {
     margin-top: 56px !important;
     height: auto !important;
     min-height: 0 !important;
-    aspect-ratio: 1 / 1 !important;
-    background-size: contain !important;
+    aspect-ratio: 16 / 7 !important;
+    background-size: cover !important;
     background-position: center center !important;
     background-repeat: no-repeat !important;
-    background-color: #f9b4c0 !important;
   }
 
   /* hide video on mobile so bg image shows fully */
