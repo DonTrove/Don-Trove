@@ -37,7 +37,7 @@ header {
   position: fixed;
   top: 0; left: 0; right: 0;
   z-index: 100;
-  background: #867575;
+  background: linear-gradient(135deg, #9A8888 0%, #867575 50%, #756565 100%);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
   border-bottom: 1px solid rgba(180, 150, 165, 0.5);
