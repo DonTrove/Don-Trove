@@ -153,6 +153,16 @@ nav { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
 }
 .hero-content { position: relative; z-index: 2; }
 
+/* video hero */
+.hero-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+
 /* ══ SEARCH TOOLBAR ══ */
 .tabs-wrap {
   display: flex;
@@ -988,78 +998,6 @@ nav { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
 @keyframes fadeUp  { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes popIn   { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-/* ══ RESPONSIVE ══ */
-@media (max-width: 860px) {
-  .cart-layout   { grid-template-columns: 1fr; }
-  .checkout-grid { grid-template-columns: 1fr; }
-}
-
-@media (max-width: 640px) {
-  header {
-    padding: 0 12px;
-    height: 60px;
-    gap: 6px;
-  }
-.hero {
-    margin-top: 60px;
-
-    height: 320px;
-    min-height: 320px;
-
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center top;
-}
-  .tabs-wrap {
-    top: 60px;
-    padding: 10px 12px;
-  }
-
-  .brand {
-    font-size: 0.78rem;
-    letter-spacing: 0.05em;
-  }
-
-  .nav-btn:not(.cart-btn) {
-    display: flex !important;
-    align-items: center;
-    padding: 7px 10px;
-    font-size: 0.7rem;
-    letter-spacing: 0.06em;
-  }
-
-  .nav-btn.cart-btn {
-    padding: 7px 12px 7px 10px;
-    font-size: 0.72rem;
-  }
-
-  .view { padding: 24px 12px 80px; }
-  .payment-options { grid-template-columns: 1fr; }
-  .search-bar-wrap { max-width: 100%; }
-  .carousel-arrow { opacity: 1 !important; }
-
-  .products-grid {
-    grid-template-columns: 1fr;
-    gap: 18px;
-  }
-
-  .product-img-wrap { height: 320px; }
-  .product-img-wrap .carousel-slide { object-fit: contain; background: #f9f0f2; }
-
-  .cart-item { flex-wrap: wrap; }
-}
-
-@media (max-width: 400px) {
-  .nav-btn.about-btn { padding: 7px 8px; font-size: 0; }
-  .nav-btn.about-btn::before { content: "✦"; font-size: 0.85rem; }
-}
-
-@media (max-width: 560px) {
-  .form-row          { grid-template-columns: 1fr; }
-  .about-contact-row { grid-template-columns: 1fr; }
-  .about-title       { font-size: 1.9rem; }
-}
-
 /* ══ SIZE SELECTOR ══ */
 .size-row {
   display: flex;
@@ -1129,13 +1067,116 @@ button.size-btn.size-btn-active {
   background: var(--blush);
 }
 
-/* ===== UNIFIED 867575 THEME OVERRIDES ===== */
+/* ══ TABLET ══ */
+@media (max-width: 860px) {
+  .cart-layout   { grid-template-columns: 1fr; }
+  .checkout-grid { grid-template-columns: 1fr; }
+}
+
+/* ══ MOBILE ══ */
+@media (max-width: 640px) {
+
+  /* Header */
+  header {
+    padding: 0 12px;
+    height: 56px;
+    gap: 6px;
+  }
+
+  .brand {
+    font-size: 0.8rem;
+    letter-spacing: 0.04em;
+  }
+
+  .nav-btn:not(.cart-btn) {
+    padding: 6px 10px;
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+  }
+
+  .nav-btn.cart-btn {
+    padding: 6px 14px 6px 10px;
+    font-size: 0.72rem;
+  }
+
+  /* Hero: full image visible, no cropping */
+  .hero {
+    margin-top: 56px;
+    height: auto;
+    aspect-ratio: 2 / 1;   /* adjust to match your BG.png ratio */
+    background-size: cover;
+    background-position: center center;
+  }
+
+  .hero-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Search bar */
+  .tabs-wrap {
+    top: 56px;
+    padding: 8px 12px;
+    gap: 6px;
+  }
+
+  .search-bar-wrap { max-width: 100%; }
+
+  /* Shop view */
+  .view { padding: 16px 12px 80px; }
+
+  .section-title { font-size: 1.5rem; margin-bottom: 4px; }
+  .section-sub   { font-size: 0.82rem; margin-bottom: 16px; }
+
+  /* Single column products */
+  .products-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  /* Product images: show full, no crop */
+  .product-img-wrap {
+    height: auto;
+    aspect-ratio: 4 / 3;
+    background-color: #f9f0f2;
+  }
+
+  .product-img-wrap .carousel-slide {
+    object-fit: contain;
+  }
+
+  /* Always show carousel arrows on touch */
+  .carousel-arrow { opacity: 1 !important; }
+
+  /* Cart & checkout */
+  .cart-layout    { grid-template-columns: 1fr; }
+  .checkout-grid  { grid-template-columns: 1fr; }
+  .payment-options { grid-template-columns: 1fr 1fr; }
+  .form-row       { grid-template-columns: 1fr; }
+  .cart-item      { flex-wrap: wrap; }
+}
+
+/* Very small phones */
+@media (max-width: 400px) {
+  .nav-btn.about-btn { padding: 6px 8px; font-size: 0; }
+  .nav-btn.about-btn::before { content: "✦"; font-size: 0.85rem; }
+}
+
+@media (max-width: 560px) {
+  .about-contact-row { grid-template-columns: 1fr; }
+  .about-title       { font-size: 1.8rem; }
+}
+
+/* ══ UNIFIED THEME OVERRIDES ══ */
 .nav-btn.cart-btn,
 .add-btn,
 .checkout-btn,
 .place-order-btn,
-.back-shop-btn{
-  background: linear-gradient(135deg,#9A8888 0%,#867575 50%,#756565 100%) !important;
+.back-shop-btn {
+  background: linear-gradient(135deg, #9A8888 0%, #867575 50%, #756565 100%) !important;
   box-shadow: 0 4px 18px rgba(134,117,117,.35) !important;
 }
 
@@ -1143,8 +1184,8 @@ button.size-btn.size-btn-active {
 .add-btn:hover,
 .checkout-btn:hover,
 .place-order-btn:hover,
-.back-shop-btn:hover{
-  background:#867575 !important;
+.back-shop-btn:hover {
+  background: #867575 !important;
 }
 
 .product-price,
@@ -1152,35 +1193,26 @@ button.size-btn.size-btn-active {
 .order-ref-badge,
 .manage-info-banner a,
 .about-card-text em,
-.about-signature{
-  color:#867575 !important;
+.about-signature {
+  color: #867575 !important;
 }
 
-.order-ref-badge{
-  border-color:#867575 !important;
-}
+.order-ref-badge { border-color: #867575 !important; }
 
-.success-icon{
-  background:linear-gradient(135deg,#9A8888,#867575) !important;
-}
+.success-icon { background: linear-gradient(135deg, #9A8888, #867575) !important; }
 
 .form-group input:focus,
 .form-group select:focus,
-.form-group textarea:focus{
-  border-color:#867575 !important;
-  box-shadow:0 0 0 3px rgba(134,117,117,.15) !important;
+.form-group textarea:focus {
+  border-color: #867575 !important;
+  box-shadow: 0 0 0 3px rgba(134,117,117,.15) !important;
 }
 
-.tab.active,
-.tab:hover{
-  color:#867575 !important;
+.tab.active, .tab:hover { color: #867575 !important; }
+
+.qty-btn:hover {
+  background: #867575 !important;
+  border-color: #867575 !important;
 }
 
-.qty-btn:hover{
-  background:#867575 !important;
-  border-color:#867575 !important;
-}
-
-.search-bar:focus{
-  border-color:#867575 !important;
-}
+.search-bar:focus { border-color: #867575 !important; }
