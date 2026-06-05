@@ -1101,21 +1101,19 @@ button.size-btn.size-btn-active {
 
   /* Hero: full image visible, no cropping */
   .hero {
-    margin-top: 56px;
-    height: auto;
-    aspect-ratio: 1 / 1;
-    background-size: contain;
-    background-position: center center;
-    background-repeat: no-repeat;
-    background-color: #f9b4c0;
+    margin-top: 56px !important;
+    height: auto !important;
+    min-height: 0 !important;
+    aspect-ratio: 1 / 1 !important;
+    background-size: contain !important;
+    background-position: center center !important;
+    background-repeat: no-repeat !important;
+    background-color: #f9b4c0 !important;
   }
 
+  /* hide video on mobile so bg image shows fully */
   .hero-video {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
+    display: none !important;
   }
 
   /* Search bar */
@@ -1139,15 +1137,15 @@ button.size-btn.size-btn-active {
     gap: 16px;
   }
 
-  /* Product images: fill card, cover mode */
+  /* Product images: fill card properly */
   .product-img-wrap {
-    height: 280px;
-    background-color: #f9f0f2;
+    height: 260px !important;
+    background-color: #f9f0f2 !important;
   }
 
   .product-img-wrap .carousel-slide {
-    object-fit: cover;
-    object-position: center;
+    object-fit: cover !important;
+    object-position: center top !important;
   }
 
   /* Always show carousel arrows on touch */
