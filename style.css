@@ -1131,16 +1131,38 @@ button.size-btn.size-btn-active {
   .section-title { font-size: 1.5rem; margin-bottom: 4px; }
   .section-sub   { font-size: 0.82rem; margin-bottom: 16px; }
 
-  /* Single column products */
+  /* Single column products — smaller card */
   .products-grid {
     grid-template-columns: 1fr;
-    gap: 16px;
+    gap: 12px;
+    max-width: 78% !important;
+    margin: 0 auto !important;
   }
 
-  /* Product images: fill card properly */
+  /* Product images: show full image, not cropped */
   .product-img-wrap {
-    height: 200px !important;
+    height: auto !important;
+    aspect-ratio: 4 / 3 !important;
     background-color: #f9f0f2 !important;
+  }
+
+  .product-img-wrap .carousel-slide {
+    object-fit: contain !important;
+    object-position: center center !important;
+  }
+
+  /* Slightly tighter card body */
+  .product-body {
+    padding: 12px 14px 14px !important;
+  }
+
+  .product-name {
+    font-size: 1rem !important;
+  }
+
+  .product-desc {
+    font-size: 0.78rem !important;
+    margin-bottom: 10px !important;
   }
 
   .product-img-wrap .carousel-slide {
