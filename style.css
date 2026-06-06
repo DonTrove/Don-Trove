@@ -1099,13 +1099,13 @@ button.size-btn.size-btn-active {
     font-size: 0.72rem;
   }
 
-  /* Hero: show full banner image */
+  /* Hero: exact 1920x480 banner ratio, no stretch, no gaps */
   .hero {
     margin-top: 56px !important;
     height: auto !important;
     min-height: 0 !important;
-    aspect-ratio: 21 / 9 !important;
-    background-size: 100% 100% !important;
+    aspect-ratio: 4 / 1 !important;
+    background-size: cover !important;
     background-position: center center !important;
     background-repeat: no-repeat !important;
     background-color: transparent !important;
