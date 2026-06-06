@@ -422,9 +422,9 @@ nav { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
 }
 .product-footer { display: flex; align-items: center; justify-content: space-between; }
 .product-price {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.35rem;
-  font-weight: 600;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
   color: #867575;
 }
 .add-btn {
@@ -1139,7 +1139,7 @@ button.size-btn.size-btn-active {
 
   /* Product images: fill card properly */
   .product-img-wrap {
-    height: 260px !important;
+    height: 200px !important;
     background-color: #f9f0f2 !important;
   }
 
