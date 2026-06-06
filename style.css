@@ -1104,11 +1104,11 @@ button.size-btn.size-btn-active {
     margin-top: 56px !important;
     height: auto !important;
     min-height: 0 !important;
-    aspect-ratio: 5 / 3 !important;
-    background-size: contain !important;
+    aspect-ratio: 21 / 9 !important;
+    background-size: 100% 100% !important;
     background-position: center center !important;
     background-repeat: no-repeat !important;
-    background-color: #F9D8DC !important;
+    background-color: transparent !important;
   }
 
   /* hide video on mobile so bg image shows fully */
